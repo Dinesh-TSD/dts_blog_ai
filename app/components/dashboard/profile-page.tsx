@@ -6,14 +6,20 @@ import { btnPrimary, inputClass, panel } from "../../lib/dashboard";
 
 export function ProfilePage() {
   const [email, setEmail] = useState("");
-  const [name, setName] = useState("Admin User");
+  const [name, setName] = useState("");
+  const [picture, setPicture] = useState<string | null>(null);
+  const [provider, setProvider] = useState<string>("email");
   const [bio, setBio] = useState(
     "Content creator and tech writer at DTS TECH AI.",
   );
 
   useEffect(() => {
     const session = getAuthSession();
-    if (session) setEmail(session.email);
+    if (!session) return;
+    setEmail(session.email);
+    setName(session.name ?? session.email.split("@")[0]);
+    setPicture(session.picture ?? null);
+    setProvider(session.provider);
   }, []);
 
   return (
@@ -29,18 +35,24 @@ export function ProfilePage() {
       </div>
 
       <div className={`${panel} mb-6 flex items-center gap-4`}>
-        <div className="flex size-16 items-center justify-center rounded-full bg-[var(--accent-purple)] text-xl font-bold text-white">
-          {name
-            .split(" ")
-            .map((n) => n[0])
-            .join("")
-            .slice(0, 2)
-            .toUpperCase()}
+        <div className="flex size-16 items-center justify-center overflow-hidden rounded-full bg-[var(--accent-purple)] text-xl font-bold text-white">
+          {picture ? (
+            <img src={picture} alt={name} className="size-full object-cover" />
+          ) : (
+            (name || email || "U")
+              .split(" ")
+              .map((n) => n[0])
+              .join("")
+              .slice(0, 2)
+              .toUpperCase()
+          )}
         </div>
         <div>
           <p className="text-lg font-bold text-[var(--text-primary)]">{name}</p>
           <p className="text-sm text-[var(--text-secondary)]">{email}</p>
-          <p className="mt-1 text-xs text-[var(--accent-purple)]">Administrator</p>
+          <p className="mt-1 text-xs text-[var(--accent-purple)] capitalize">
+            {provider === "google" ? "Google Account" : "Email Account"}
+          </p>
         </div>
       </div>
 

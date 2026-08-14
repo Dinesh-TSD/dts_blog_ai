@@ -1,21 +1,21 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { Footer } from "../components/footer";
-import { LoginForm } from "../components/login-form";
+import { ForgotPasswordForm } from "../components/forgot-password-form";
 import { Navbar } from "../components/navbar";
 
 export const metadata: Metadata = {
-  title: "Login | DTS TECH AI",
-  description: "Sign in to your DTS TECH AI dashboard.",
+  title: "Forgot Password | DTS TECH AI",
+  description: "Reset your DTS TECH AI account password.",
 };
-  
-export default function LoginPage() {
+
+export default function ForgotPasswordPage() {
   return (
     <>
       <Navbar />
       <section className="flex min-h-[calc(100vh-200px)] items-center justify-center px-6 py-12">
         <Suspense fallback={<p className="text-sm text-[var(--text-secondary)]">Loading...</p>}>
-          <LoginForm />
+          <ForgotPasswordForm />
         </Suspense>
       </section>
       <Footer />

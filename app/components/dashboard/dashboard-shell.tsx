@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { BrandLogo } from "../brand-logo";
-import { clearAuthSession, getAuthSession } from "../../lib/auth";
+import { getAuthSession, isValidAuthSession, logoutFromServer, syncSessionFromServer } from "../../lib/auth";
 import { dashboardNav } from "../../lib/dashboard";
 
 const notifications = [
@@ -17,28 +17,52 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
   const [email, setEmail] = useState<string | null>(null);
+  const [displayName, setDisplayName] = useState<string | null>(null);
+  const [picture, setPicture] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
-    const session = getAuthSession();
-    if (!session) {
-      router.replace("/login");
-      return;
+    let active = true;
+
+    async function loadSession() {
+      let session = getAuthSession();
+
+      if (!session) {
+        session = await syncSessionFromServer();
+      }
+
+      if (!active) return;
+
+      if (!isValidAuthSession(session)) {
+        router.replace("/login");
+        return;
+      }
+
+      setEmail(session.email);
+      setDisplayName(session.name ?? session.email.split("@")[0]);
+      setPicture(session.picture ?? null);
+      setReady(true);
     }
-    setEmail(session.email);
-    setReady(true);
+
+    void loadSession();
+
+    return () => {
+      active = false;
+    };
   }, [router]);
 
-  const handleLogout = () => {
-    clearAuthSession();
+  const handleLogout = async () => {
+    await logoutFromServer();
     router.push("/login");
   };
 
-  const initials = email
-    ? email
-        .split("@")[0]
+  const initials = displayName
+    ? displayName
+        .split(" ")
+        .map((part) => part[0])
+        .join("")
         .slice(0, 2)
         .toUpperCase()
     : "DT";
@@ -175,10 +199,18 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
 
             <Link
               href="/dashboard/profile"
-              className="flex size-9 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--accent-purple)] text-xs font-bold text-white no-underline"
+              className="flex size-9 items-center justify-center overflow-hidden rounded-full border border-[var(--border)] bg-[var(--accent-purple)] text-xs font-bold text-white no-underline"
               title="Profile"
             >
-              {initials}
+              {picture ? (
+                <img
+                  src={picture}
+                  alt={displayName ?? "Profile"}
+                  className="size-full object-cover"
+                />
+              ) : (
+                initials
+              )}
             </Link>
 
             <button
