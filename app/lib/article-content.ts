@@ -5,6 +5,7 @@ export type ArticleSection = {
 };
 
 export type ArticleContent = {
+  tableOfContents: { id: string; title: string; level: number; }[] | undefined;
   author: string;
   authorRole: string;
   tags: string[];
