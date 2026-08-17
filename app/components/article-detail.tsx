@@ -3,7 +3,7 @@ import { NewsletterForm } from "./newsletter-form";
 import type { Article } from "../lib/articles";
 import { card } from "../lib/site";
 
-type AiTool = {
+export type AiTool = {
   id: string;
   name: string;
   emoji: string;
@@ -18,158 +18,13 @@ type AiTool = {
   useCases: { icon: string; text: string }[];
 };
 
-const aiTools: AiTool[] = [
-  {
-    id: "chatgpt",
-    name: "ChatGPT",
-    emoji: "🤖",
-    tagline: "Best AI Chatbot for Writing, Learning & Productivity",
-    website: "https://chatgpt.com",
-    websiteLabel: "chatgpt.com",
-    description:
-      "ChatGPT is an advanced AI chatbot developed by OpenAI. It can understand natural language and generate human-like responses, making it perfect for writing, brainstorming, coding, learning, and automating daily tasks.",
-    features: [
-      "Human-like conversations",
-      "Content generation & editing",
-      "Code writing & debugging",
-      "Supports plugins & GPTs",
-      "Image understanding (Vision)",
-      "Web browsing (with Bing)",
-      "Voice interaction",
-      "Custom GPT creation",
-    ],
-    pros: [
-      "Very easy to use",
-      "Great for writing & brainstorming",
-      "Saves a lot of time",
-      "Available on web, mobile & API",
-      "Regular updates & new features",
-    ],
-    cons: [
-      "Free version has usage limits",
-      "May give incorrect information",
-      "Internet connection required",
-      "Advanced features are paid",
-    ],
-    bestFor: [
-      { icon: "✏️", label: "Writers" },
-      { icon: "🎓", label: "Students" },
-      { icon: "</>", label: "Developers" },
-      { icon: "📢", label: "Marketers" },
-      { icon: "💼", label: "Business Owners" },
-    ],
-    useCases: [
-      { icon: "📝", text: "Write blogs, articles & emails" },
-      { icon: "🌍", text: "Translate languages" },
-      { icon: "📋", text: "Summarize long content" },
-      { icon: "💡", text: "Generate ideas & outlines" },
-      { icon: "🐛", text: "Solve coding problems" },
-      { icon: "📚", text: "Create study notes" },
-    ],
-  },
-  {
-    id: "claude",
-    name: "Claude",
-    emoji: "🧠",
-    tagline: "Best AI for Research, Analysis & Long Documents",
-    website: "https://claude.ai",
-    websiteLabel: "claude.ai",
-    description:
-      "Claude is an AI assistant built by Anthropic, known for its strong reasoning, safety, and ability to handle very long documents. It excels at research, analysis, summarization, and thoughtful writing.",
-    features: [
-      "200k token context window",
-      "Deep document analysis",
-      "Code generation",
-      "Nuanced writing",
-      "Strong reasoning",
-      "Safe & aligned responses",
-      "File & image uploads",
-      "API access",
-    ],
-    pros: [
-      "Handles very long documents",
-      "Excellent reasoning skills",
-      "More accurate than most models",
-      "Great for research tasks",
-      "Safety-focused responses",
-    ],
-    cons: [
-      "No internet browsing",
-      "Limited free usage",
-      "Less creative than ChatGPT",
-      "No image generation",
-    ],
-    bestFor: [
-      { icon: "🔬", label: "Researchers" },
-      { icon: "📖", label: "Readers" },
-      { icon: "</>", label: "Developers" },
-      { icon: "✏️", label: "Writers" },
-      { icon: "⚖️", label: "Legal Pros" },
-    ],
-    useCases: [
-      { icon: "📄", text: "Analyze long PDFs & docs" },
-      { icon: "🔍", text: "Deep research & summaries" },
-      { icon: "✍️", text: "Thoughtful long-form writing" },
-      { icon: "💡", text: "Complex problem solving" },
-      { icon: "🐛", text: "Code review & debugging" },
-      { icon: "📊", text: "Data analysis & reports" },
-    ],
-  },
-  {
-    id: "gemini",
-    name: "Gemini",
-    emoji: "✨",
-    tagline: "Best AI for Google Workspace & Multimodal Tasks",
-    website: "https://gemini.google.com",
-    websiteLabel: "gemini.google.com",
-    description:
-      "Gemini is Google's most capable AI model, deeply integrated with Google Search, Docs, Gmail, and other Google services. It excels at multimodal tasks including text, images, audio, and video understanding.",
-    features: [
-      "Google Search integration",
-      "Multimodal understanding",
-      "Google Workspace sync",
-      "Real-time information",
-      "Image & video analysis",
-      "Code generation",
-      "Voice interaction",
-      "Multi-language support",
-    ],
-    pros: [
-      "Free with generous limits",
-      "Real-time web access",
-      "Deep Google integration",
-      "Excellent multimodal skills",
-      "Fast response speed",
-    ],
-    cons: [
-      "Less accurate for niche tasks",
-      "Privacy concerns with Google",
-      "Advanced plan can be costly",
-      "Inconsistent with complex code",
-    ],
-    bestFor: [
-      { icon: "🔍", label: "Researchers" },
-      { icon: "📧", label: "Gmail Users" },
-      { icon: "📊", label: "Analysts" },
-      { icon: "🎨", label: "Creators" },
-      { icon: "💼", label: "Professionals" },
-    ],
-    useCases: [
-      { icon: "📧", text: "Draft & reply to emails" },
-      { icon: "🔍", text: "Search & summarize web info" },
-      { icon: "📊", text: "Analyze images & charts" },
-      { icon: "📝", text: "Write docs in Google Docs" },
-      { icon: "🌍", text: "Translate & localize content" },
-      { icon: "💡", text: "Brainstorm with real-time data" },
-    ],
-  },
-];
-
 export function ArticleDetailContent({
   article,
   content,
+  aiTools,
 }: {
   article: Article;
+  aiTools: AiTool[];
   content: {
     author: string;
     authorRole: string;
@@ -240,9 +95,9 @@ export function ArticleDetailContent({
             />
           </div>
 
-          {/* AI Tools List - mapped */}
+          {/* AI Tools List - mapped from API */}
           {aiTools.map((tool, toolIdx) => (
-            <div key={tool.id} className="space-y-5 rounded-xl border border-[var(--border)] p-6">
+            <div key={tool.id} id={tool.id} className="space-y-5 rounded-xl border border-[var(--border)] p-6 scroll-mt-6">
 
               {/* Tool Header */}
               <div className="flex flex-wrap items-center justify-between gap-4">
@@ -466,18 +321,29 @@ export function ArticleDetailContent({
   );
 }
 
-export function ArticleSidebar({ tableOfContents }: { tableOfContents?: { id: string; title: string; level: number }[] } = {}) {
-  // Default sample table of contents if none provided
-  const defaultTableOfContents = [
+export function ArticleSidebar({
+  tableOfContents,
+  aiTools = [],
+}: {
+  tableOfContents?: { id: string; title: string; level: number }[];
+  aiTools?: AiTool[];
+} = {}) {
+  // Build TOC from aiTools if no explicit tableOfContents provided
+  const generatedToc: { id: string; title: string; level: number }[] = [
     { id: "intro", title: "Introduction", level: 1 },
-    { id: "chatgpt", title: "1. ChatGPT", level: 1 },
-    { id: "claude", title: "2. Claude", level: 1 },
-    { id: "gemini", title: "3. Gemini", level: 1 },
+    ...aiTools.map((tool, idx) => ({
+      id: tool.id,
+      title: `${idx + 1}. ${tool.name}`,
+      level: 1,
+    })),
     { id: "faq", title: "Frequently Asked Questions", level: 1 },
     { id: "conclusion", title: "Conclusion", level: 1 },
   ];
 
-  const tocData = tableOfContents && tableOfContents.length > 0 ? tableOfContents : defaultTableOfContents;
+  const tocData =
+    tableOfContents && tableOfContents.length > 0
+      ? tableOfContents
+      : generatedToc;
 
   return (
     <aside className="flex flex-col gap-6">
