@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { BlogArticleCard } from "./blog-article-card";
 import { Pagination } from "./pagination";
+import { Article } from "./article-detail";
 
 const PAGE_SIZE = 6;
 const filterTabs = [
@@ -20,20 +21,6 @@ const categoryLabelMap: Record<string, string> = {
   tools: "Developer Tools",
 };
 
-type Article = {
-  slug: string;
-  title: string;
-  excerpt: string;
-  category: string;
-  categoryColor: string;
-  categorySlug: string;
-  date: string;
-  readTime: string;
-  readMinutes: number;
-  popular: boolean;
-  image: string;
-  imageAlt: string;
-};
 
 type PostsApiResponse = {
   success: boolean;
@@ -63,7 +50,7 @@ export function BlogListing() {
 
   useEffect(() => {
     async function loadPosts() {
-      try { 
+      try {
         setLoading(true);
         setError(null);
 
@@ -99,7 +86,14 @@ export function BlogListing() {
   }, [category, activeTab, query, currentPage]);
 
   const categoryOptions = useMemo(() => {
-    const uniqueSlugs = Array.from(new Set(articles.map((article) => article.categorySlug))).sort();
+    const uniqueSlugs = Array.from(
+      new Set(
+        articles
+          .map((article) => String(article.categorySlug ?? "").trim().toLowerCase())
+          .filter((slug) => slug && slug !== "all"),
+      ),
+    )
+      .sort();
 
     return [
       { slug: "all", label: "All Categories" },
@@ -168,7 +162,7 @@ export function BlogListing() {
           <div className="relative flex-1">
             <span className="pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2 text-[var(--text-secondary)]">
               🔍
-            </span> 
+            </span>
             <input
               type="search"
               value={query}
@@ -208,11 +202,10 @@ export function BlogListing() {
                 key={tab.id}
                 type="button"
                 onClick={() => setActiveTab(tab.id)}
-                className={`cursor-pointer rounded-lg border px-3.5 py-1.5 text-sm font-medium transition-all duration-300 ${
-                  isActive
+                className={`cursor-pointer rounded-lg border px-3.5 py-1.5 text-sm font-medium transition-all duration-300 ${isActive
                     ? "border-[var(--accent-purple)] bg-[var(--accent-purple)] text-white"
                     : "border-[var(--border)] bg-[var(--bg-primary)] text-[var(--text-secondary)] hover:border-[var(--accent-purple)] hover:text-[var(--text-primary)]"
-                }`}
+                  }`}
               >
                 {tab.label}
               </button>

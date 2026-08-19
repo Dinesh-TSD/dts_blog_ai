@@ -4,28 +4,13 @@ import {
   ArticleDetailContent,
   ArticleSidebar,
   RelatedArticles,
-  type AiTool,
 } from "../../components/article-detail";
+import type { Article } from "../../components/article-detail";
 import { Footer } from "../../components/footer";
 import { Navbar } from "../../components/navbar";
 import { BRAND_NAME } from "../../lib/site";
 import type { PostDocument } from "../../models/post";
 
-
-type Article = {
-  slug: string;
-  title: string;
-  excerpt: string;
-  category: string;
-  categoryColor: string;
-  categorySlug: string;
-  date: string;
-  readTime: string;
-  readMinutes: number;
-  popular: boolean;
-  image: string;
-  imageAlt: string;
-};
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -66,18 +51,6 @@ async function fetchRelated(slug: string, categorySlug: string): Promise<PostDoc
   }
 }
 
-async function fetchAiTools(): Promise<AiTool[]> {
-  try {
-    const res = await fetch(`${getBaseUrl()}/api/ai-tools`, {
-      next: { revalidate: 3600 },
-    });
-    if (!res.ok) return [];
-    const json = await res.json();
-    return json.success ? (json.data as AiTool[]) : [];
-  } catch {
-    return [];
-  }
-}
 
 async function fetchAllSlugs(): Promise<string[]> {
   try {
@@ -92,22 +65,6 @@ async function fetchAllSlugs(): Promise<string[]> {
   }
 }
 
-function postToArticle(post: PostDocument): Article {
-  return {
-    slug:          post.slug,
-    title:         post.title,
-    excerpt:       post.excerpt,
-    category:      post.category,
-    categoryColor: post.categoryColor,
-    categorySlug:  post.categorySlug,
-    date:          post.date,
-    readTime:      post.readTime,
-    readMinutes:   post.readMinutes,
-    popular:       post.popular ?? false,
-    image:         post.image,
-    imageAlt:      post.imageAlt,
-  };
-}
 
 // ─── Static params — from DB only ────────────────────────────────────────────
 
@@ -133,47 +90,25 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function ArticlePage({ params }: Props) {
   const { slug } = await params;
 
-  const [post, aiTools] = await Promise.all([
-    fetchPost(slug),
-    fetchAiTools(),
-  ]);
+  const article = await fetchPost(slug);
 
   // Hard 404 if post not in DB
-  if (!post) notFound();
+  if (!article) notFound();
 
-  const article = postToArticle(post);
-
-  const content = {
-    author:          post.author,
-    authorRole:      post.authorRole,
-    tags:            [...(post.tags ?? [])] as string[],
-    tableOfContents: (post.tableOfContents ?? []) as {
-      id: string; title: string; level: number;
-    }[],
-    sections: (post.sections ?? []) as {
-      heading?: string;
-      paragraphs: string[];
-      list?: string[];
-      image?: string;
-      imageCaption?: string;
-    }[],
-  };
-
-  const relatedPosts = await fetchRelated(slug, post.categorySlug);
-  const related = relatedPosts.map(postToArticle);
-
+  const relatedPosts = await fetchRelated(slug, article.categorySlug);
+  
   return (
     <>
       <Navbar />
 
       <div className="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-6 py-8 lg:grid-cols-[1fr_300px]">
         <div>
-          <ArticleDetailContent article={article} content={content} aiTools={aiTools} />
-          <RelatedArticles articles={related} />
+          <ArticleDetailContent article={article as unknown as Article} />
+          <RelatedArticles articles={relatedPosts as unknown as Article[]} />
         </div>
         <ArticleSidebar
-          tableOfContents={content.tableOfContents}
-          aiTools={aiTools}
+          tableOfarticles={article.tableOfContents}
+          article={article as unknown as Article}
         />
       </div>
 

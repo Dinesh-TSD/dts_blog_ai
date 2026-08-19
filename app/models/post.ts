@@ -13,11 +13,28 @@ const tocItemSchema = new Schema(
 
 const sectionSchema = new Schema(
   {
+    id:         { type: String },
     heading:    { type: String },
     paragraphs: { type: [String], required: true, default: [] },
     list:       { type: [String], default: [] },
     image:      { type: String },
     imageCaption: { type: String },
+  },
+  { _id: false },
+);
+
+const faqSchema = new Schema(
+  {
+    question: { type: String, required: true },
+    answer:   { type: String, required: true },
+  },
+  { _id: false },
+);
+
+const conclusionSchema = new Schema(
+  {
+    heading:    { type: String },
+    paragraphs: { type: [String], default: [] },
   },
   { _id: false },
 );
@@ -46,6 +63,8 @@ const postSchema = new Schema(
     tags:             { type: [String], default: [] },
     tableOfContents:  { type: [tocItemSchema], default: [] },
     sections:         { type: [sectionSchema], default: [] },
+    faqs:             { type: [faqSchema], default: [] },
+    conclusion:       { type: conclusionSchema },
 
     // ── Status ───────────────────────────────────────────────────────────────
     published: { type: Boolean, default: true },

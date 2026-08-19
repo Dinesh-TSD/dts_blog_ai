@@ -1,5 +1,6 @@
 import Link from "next/link";
-import type { Article } from "../lib/articles";
+import { Article } from "./article-detail";
+
 
 export function BlogArticleCard({
   article,
@@ -8,6 +9,9 @@ export function BlogArticleCard({
   article: Article;
   reverse?: boolean;
 }) {
+  const imageUrl = article.featuredImage?.url ?? article.image ?? "";
+  const imageAlt = article.featuredImage?.alt ?? article.imageAlt ?? article.title;
+
   return (
     <article className="overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)] transition-all duration-300 hover:-translate-y-1 hover:border-[var(--accent-purple)]">
       <div
@@ -15,8 +19,8 @@ export function BlogArticleCard({
       >
         <div className="md:w-[42%]">
           <img
-            src={article.image}
-            alt={article.imageAlt}
+            src={ article.featuredImage.url}
+            alt={article.featuredImage.alt }
             className="h-48 w-full bg-[var(--bg-primary)] object-cover md:h-full md:min-h-[220px]"
           />
         </div>
@@ -37,9 +41,9 @@ export function BlogArticleCard({
           </div>
           <div className="mt-5">
             <div className="mb-3 flex flex-wrap items-center gap-4 text-[11px] text-[var(--text-secondary)]">
-              <span className="flex items-center gap-1">📅 {article.date}</span>
+              <span className="flex items-center gap-1">📅 {article.createdAt}</span>
               <span className="flex items-center gap-1">
-                ⏱️ {article.readTime}
+                ⏱️ {article.readingTime}
               </span>
             </div>
             <Link

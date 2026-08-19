@@ -1,61 +1,126 @@
 import Link from "next/link";
 import { NewsletterForm } from "./newsletter-form";
-import type { Article } from "../lib/articles";
 import { card } from "../lib/site";
 
-export type AiTool = {
-  id: string;
-  name: string;
-  emoji: string;
-  tagline: string;
-  website: string;
-  websiteLabel: string;
-  description: string;
-  features: string[];
-  pros: string[];
-  cons: string[];
-  bestFor: { icon: string; label: string }[];
-  useCases: { icon: string; text: string }[];
+export type Article = {
+  categorySlug: string;
+  categoryColor: string | undefined;
+  _id?: string;
+
+  title: string;
+  slug: string;
+  excerpt: string;
+
+  featuredImage: {
+    url: string;
+    alt: string;
+  };
+  image?: string;
+  imageAlt?: string;
+
+  author: {
+    charAt(arg0: number): unknown;
+    name: string;
+    avatar?: string;
+    role?: string;
+  };
+
+  category: string;
+  tags: string[];
+
+  published: boolean;
+  featured: boolean;
+
+  readingTime: number;
+  views: number;
+
+  publishedAt: string;
+  createdAt?: string;
+  updatedAt?: string;
+
+  tableOfContents: {
+    id: string;
+    title: string;
+  }[];
+
+  sections: {
+    id: string;
+    type: "text" | "list" | "table" | "pros-cons" | "tool-grid";
+    heading: string;
+
+    paragraphs?: string[];
+
+    image?: string;
+    imageCaption?: string;
+
+    items?: string[];
+
+    columns?: string[];
+    rows?: string[][];
+
+    pros?: string[];
+    cons?: string[];
+
+    tools?: {
+      name: string;
+      logo: string;
+      description: string;
+      pricing: string;
+      website: string;
+    }[];
+  }[];
+
+  faq: {
+    question: string;
+    answer: string;
+  }[];
+
+  conclusion: {
+    heading: string;
+    paragraphs: string[];
+  };
+
+  relatedPosts: string[];
+
+  seo: {
+    metaTitle: string;
+    metaDescription: string;
+    keywords: string[];
+
+    canonicalUrl: string;
+
+    openGraph: {
+      title: string;
+      description: string;
+      image: string;
+    };
+
+    twitter: {
+      title: string;
+      description: string;
+      image: string;
+    };
+  };
 };
 
 export function ArticleDetailContent({
   article,
-  content,
 }: {
   article: Article;
-  aiTools: AiTool[];
-  content: {
-    author: string;
-    authorRole: string;
-    tags: string[];
-    breadcrumbs?: { label: string; href: string }[];
-    tableOfContents?: { id: string; title: string; level: number }[];
-    faqs?: { question: string; answer: string }[];
-    pros?: string[];
-    cons?: string[];
-    bestFor?: string[];
-    sections: {
-      heading?: string;
-      paragraphs: string[];
-      list?: string[];
-      image?: string;
-      imageCaption?: string;
-    }[];
-  };
 }) {
   return (
     <article>
       {/* Outer wrapper - 75% width of browser */}
       <div className="mx-auto ">
         {/* Article Header Section - 75% width */}
-        <div className="mb-6 space-y-3">
+        <div className="mb-6 space-y-4">
           {/* Title - 75% width */}
           <h1 className="text-4xl leading-tight font-bold text-[var(--text-primary)] md:text-5xl lg:text-4xl">
             {article.title}
           </h1>
           <div className="flex flex-wrap items-center gap-4 text-sm text-[var(--text-secondary)]">
-            <span>📅 {article.date}</span>
-            <span>⏱️ {article.readTime}</span>
+            <span>📅 {article.createdAt}</span>
+            <span>⏱️ {article.readingTime}</span>
             <div className="flex items-center gap-2">
               <span>Share:</span>
               <div className="flex gap-2">
@@ -81,22 +146,44 @@ export function ArticleDetailContent({
               {article.category}
             </span>
           </div>
+          <div className="flex items-center gap-3 border-y border-[var(--border)] py-4">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--accent-purple)] font-bold text-white">
+              {article.author.name.charAt(0).toUpperCase()}
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-[var(--text-primary)]">{article.author.name}</p>
+              <p className="text-xs text-[var(--text-secondary)]">{article.author.role}</p>
+            </div>
+          </div>
+          {article.tags.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {article.tags.map((tag) => (
+                <span key={tag} className="rounded-full bg-[var(--tag-bg)] px-3 py-1 text-xs text-[var(--text-secondary)]">
+                  #{tag}
+                </span>
+              ))}
+            </div>
+          )}
         </div>
 
-        {/* Main Content - Full Width */}
+        {/* Main article - Full Width */}
         <div className="space-y-8">
           {/* Featured Image - 75% width */}
           <div className="overflow-hidden rounded-xl border border-[var(--border)]">
             <img
-              src={article.image}
-              alt={article.imageAlt}
+              src={article.featuredImage.url}
+              alt={article.featuredImage.alt}
               className="h-64 w-full object-cover md:h-80 lg:h-96"
             />
           </div>
 
           {/* Article sections mapped from API */}
-          {content.sections.map((section, sectionIdx) => (
-            <div key={`${section.heading ?? "section"}-${sectionIdx}`} className="space-y-5 rounded-xl border border-[var(--border)] p-6 scroll-mt-6">
+          {article.sections.map((section, sectionIdx) => (
+            <div
+              id={section.id || (section.heading ? section.heading.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") : undefined)}
+              key={`${section.heading ?? "section"}-${sectionIdx}`}
+              className="space-y-5 rounded-xl border border-[var(--border)] p-6 scroll-mt-6"
+            >
               {section.heading && (
                 <h2 className="text-2xl font-bold text-[var(--text-primary)]">
                   {section.heading}
@@ -109,9 +196,9 @@ export function ArticleDetailContent({
                 </p>
               ))}
 
-              {section.list && section.list.length > 0 && (
+              {section.items && section.items.length > 0 && (
                 <ul className="space-y-2 text-sm text-[var(--text-secondary)]">
-                  {section.list.map((item, idx) => (
+                  {section.items.map((item, idx) => (
                     <li key={`${item}-${idx}`} className="flex items-start gap-2">
                       <span className="mt-1 text-teal-500">•</span>
                       <span>{item}</span>
@@ -138,59 +225,13 @@ export function ArticleDetailContent({
           ))}
 
           {/* FAQ Section */}
-          {content.faqs && content.faqs.length > 0 && (
+          {article.faq && article.faq.length > 0 && (
             <div>
               <h3 className="mb-4 text-2xl font-bold text-[var(--text-primary)]">
                 Frequently Asked Questions
               </h3>
               <div className="space-y-3">
-                {content.faqs.map((faq, idx) => (
-                  <details
-                    key={idx}
-                    className="group rounded-lg border border-[var(--border)] bg-[var(--bg-secondary)] p-4"
-                  >
-                    <summary className="flex cursor-pointer items-center justify-between font-semibold text-[var(--text-primary)] hover:text-[var(--accent-purple)]">
-                      <span>{faq.question}</span>
-                      <span className="transition-transform group-open:rotate-180">▼</span>
-                    </summary>
-                    <p className="mt-3 text-sm leading-relaxed text-[var(--text-secondary)]">
-                      {faq.answer}
-                    </p>
-                  </details>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Sample FAQ if none provided */}
-          {(!content.faqs || content.faqs.length === 0) && (
-            <div>
-              <h3 className="mb-4 text-2xl font-bold text-[var(--text-primary)]">
-                Frequently Asked Questions
-              </h3>
-              <div className="space-y-3">
-                {[
-                  {
-                    question: "Which AI tool is best overall?",
-                    answer: "The best AI tool depends on your specific needs. ChatGPT is versatile for writing and learning, Claude excels at research and analysis, while specialized tools like Jasper are great for marketing copy. Consider your primary use case when choosing.",
-                  },
-                  {
-                    question: "Are these AI tools free to use?",
-                    answer: "Many AI tools offer free versions with limitations, while premium features require paid subscriptions. ChatGPT has a free tier, but advanced features like GPT-4 access need a subscription. Check each tool's pricing page for details.",
-                  },
-                  {
-                    question: "Which AI tool is best for content writing?",
-                    answer: "For content writing, Jasper and Copy.ai are specifically designed for marketing content. ChatGPT and Claude are great for general content creation. The best choice depends on your specific content needs and budget.",
-                  },
-                  {
-                    question: "Which AI tool is best for image generation?",
-                    answer: "For image generation, tools like Midjourney, DALL-E, and Stable Diffusion are specialized options. ChatGPT now includes DALL-E integration, making it a convenient all-in-one solution.",
-                  },
-                  {
-                    question: "Which AI tool is best for coding?",
-                    answer: "GitHub Copilot is purpose-built for coding and integrates directly with your IDE. ChatGPT and Claude are also excellent for debugging and explaining code. Choose based on your programming language and development environment.",
-                  },
-                ].map((faq, idx) => (
+                {article.faq.map((faq, idx) => (
                   <details
                     key={idx}
                     className="group rounded-lg border border-[var(--border)] bg-[var(--bg-secondary)] p-4"
@@ -209,17 +250,18 @@ export function ArticleDetailContent({
           )}
 
           {/* Conclusion Section */}
-          <div className="rounded-lg border-2 border-[var(--accent-purple)] bg-[var(--accent-purple)]/10 p-6">
-            <h3 className="mb-3 text-2xl font-bold text-[var(--text-primary)]">
-              Conclusion
-            </h3>
-            <p className="mb-4 text-base leading-relaxed text-[var(--text-secondary)]">
-              AI tools are here to stay, and they are getting better. Choose the right tool based on your needs and start using AI to save time, work smarter, and achieve more.
-            </p>
-            <p className="text-lg font-bold text-[var(--accent-purple)]">
-              "The best AI tool is the one that solves your problem and saves your time."
-            </p>
-          </div>
+          {article.conclusion && article.conclusion.paragraphs.length > 0 && (
+            <div id="conclusion" className="rounded-lg border-2 border-[var(--accent-purple)] bg-[var(--accent-purple)]/10 p-6">
+              <h3 className="mb-3 text-2xl font-bold text-[var(--text-primary)]">
+                {article.conclusion.heading || "Conclusion"}
+              </h3>
+              {article.conclusion.paragraphs.map((paragraph) => (
+                <p key={paragraph} className="mb-4 text-base leading-relaxed text-[var(--text-secondary)]">
+                  {paragraph}
+                </p>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </article>
@@ -227,18 +269,17 @@ export function ArticleDetailContent({
 }
 
 export function ArticleSidebar({
-  tableOfContents,
-  aiTools = [],
+  tableOfarticles,
+  article
 }: {
-  tableOfContents?: { id: string; title: string; level: number }[];
-  aiTools?: AiTool[];
+  tableOfarticles?: { id: string; title: string; level: number }[];
+  article?: Article;
 } = {}) {
-  // Build TOC from aiTools if no explicit tableOfContents provided
+  // Build a fallback TOC from the article sections if none was provided.
   const generatedToc: { id: string; title: string; level: number }[] = [
-    { id: "intro", title: "Introduction", level: 1 },
-    ...aiTools.map((tool, idx) => ({
-      id: tool.id,
-      title: `${idx + 1}. ${tool.name}`,
+    ...(article?.sections ?? []).map((section) => ({
+      id: section.id,
+      title: section.heading,
       level: 1,
     })),
     { id: "faq", title: "Frequently Asked Questions", level: 1 },
@@ -246,16 +287,16 @@ export function ArticleSidebar({
   ];
 
   const tocData =
-    tableOfContents && tableOfContents.length > 0
-      ? tableOfContents
+    tableOfarticles && tableOfarticles.length > 0
+      ? tableOfarticles
       : generatedToc;
 
   return (
     <aside className="flex flex-col gap-6">
-      {/* Table of Contents */}
+      {/* Table of articles */}
       <div className={card}>
         <h3 className="mb-4 text-sm font-bold text-[var(--text-primary)]">
-          Table of Contents
+          Table of articles
         </h3>
         <nav className="flex flex-col gap-2">
           {tocData.map((item) => (
@@ -314,8 +355,8 @@ export function RelatedArticles({ articles }: { articles: Article[] }) {
           >
             <div className="relative overflow-hidden bg-gray-200 dark:bg-gray-700">
               <img
-                src={related.image}
-                alt={related.imageAlt}
+                src={related.featuredImage.url}
+                alt={related.featuredImage.alt}
                 className="h-40 w-full object-cover transition-transform duration-300 group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
@@ -328,7 +369,7 @@ export function RelatedArticles({ articles }: { articles: Article[] }) {
                 >
                   {related.category}
                 </span>
-                <span className="text-xs text-[var(--text-secondary)]">⏱️ {related.readTime}</span>
+                <span className="text-xs text-[var(--text-secondary)]">⏱️ {related.readingTime}</span>
               </div>
               <h3 className="mt-3 text-sm font-bold leading-snug text-[var(--text-primary)] group-hover:text-[var(--accent-purple)] transition-colors">
                 {related.title}
