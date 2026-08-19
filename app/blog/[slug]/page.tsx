@@ -9,8 +9,23 @@ import {
 import { Footer } from "../../components/footer";
 import { Navbar } from "../../components/navbar";
 import { BRAND_NAME } from "../../lib/site";
-import type { Article } from "../../lib/articles";
 import type { PostDocument } from "../../models/post";
+
+
+type Article = {
+  slug: string;
+  title: string;
+  excerpt: string;
+  category: string;
+  categoryColor: string;
+  categorySlug: string;
+  date: string;
+  readTime: string;
+  readMinutes: number;
+  popular: boolean;
+  image: string;
+  imageAlt: string;
+};
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -24,12 +39,13 @@ function getBaseUrl() {
 
 async function fetchPost(slug: string): Promise<PostDocument | null> {
   try {
-    const res = await fetch(`${getBaseUrl()}/api/posts/${slug}`, {
+    const res = await fetch(`${getBaseUrl()}/api/posts/${encodeURIComponent(slug)}`, {
       next: { revalidate: 3600 },
     });
     if (!res.ok) return null;
     const json = await res.json();
     return json.success ? (json.data as PostDocument) : null;
+
   } catch {
     return null;
   }

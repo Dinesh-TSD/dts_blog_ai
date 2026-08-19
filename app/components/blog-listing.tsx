@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { BlogArticleCard } from "./blog-article-card";
 import { Pagination } from "./pagination";
 
-const PAGE_SIZE = 3;
+const PAGE_SIZE = 6;
 const filterTabs = [
   { id: "all", label: "All" },
   { id: "latest", label: "Latest" },
@@ -86,7 +86,6 @@ export function BlogListing() {
         if (!Array.isArray(json.data)) {
           throw new Error("Invalid posts data received");
         }
-console.log(json.data)
         setArticles(json.data as Article[]);
         setTotalPages(json.pagination?.totalPages ?? 1);
       } catch (err) {

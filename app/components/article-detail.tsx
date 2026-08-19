@@ -21,7 +21,6 @@ export type AiTool = {
 export function ArticleDetailContent({
   article,
   content,
-  aiTools,
 }: {
   article: Article;
   aiTools: AiTool[];
@@ -95,140 +94,46 @@ export function ArticleDetailContent({
             />
           </div>
 
-          {/* AI Tools List - mapped from API */}
-          {aiTools.map((tool, toolIdx) => (
-            <div key={tool.id} id={tool.id} className="space-y-5 rounded-xl border border-[var(--border)] p-6 scroll-mt-6">
+          {/* Article sections mapped from API */}
+          {content.sections.map((section, sectionIdx) => (
+            <div key={`${section.heading ?? "section"}-${sectionIdx}`} className="space-y-5 rounded-xl border border-[var(--border)] p-6 scroll-mt-6">
+              {section.heading && (
+                <h2 className="text-2xl font-bold text-[var(--text-primary)]">
+                  {section.heading}
+                </h2>
+              )}
 
-              {/* Tool Header */}
-              <div className="flex flex-wrap items-center justify-between gap-4">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-lg bg-teal-600 text-lg font-bold text-white">
-                    {toolIdx + 1}
-                  </div>
-                  <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-teal-100 text-2xl">
-                    {tool.emoji}
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-[var(--text-primary)]">{tool.name}</h3>
-                    <p className="text-xs text-teal-600">{tool.tagline}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-1 text-xs text-[var(--text-secondary)]">
-                    <span>🌐</span>
-                    <span>Official Website:</span>
-                    <a href={tool.website} target="_blank" rel="noopener noreferrer" className="text-teal-600 hover:underline">
-                      {tool.websiteLabel}
-                    </a>
-                  </div>
-                  <a
-                    href={tool.website}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="rounded-lg bg-teal-600 px-5 py-2 text-sm font-bold text-white hover:bg-teal-700 transition-colors"
-                  >
-                    Try It Now →
-                  </a>
-                </div>
-              </div>
+              {section.paragraphs?.map((paragraph, idx) => (
+                <p key={`${section.heading ?? "paragraph"}-${idx}`} className="text-sm leading-relaxed text-[var(--text-secondary)]">
+                  {paragraph}
+                </p>
+              ))}
 
-              {/* Hero Image */}
-              <div className="overflow-hidden rounded-lg border border-[var(--border)]">
-                <img
-                  src={article.image}
-                  alt={tool.name}
-                  className="w-full object-cover max-h-56"
-                />
-              </div>
-
-              {/* Description */}
-              <p className="text-sm leading-relaxed text-[var(--text-secondary)]">
-                {tool.description}
-              </p>
-
-              {/* Key Features */}
-              <div>
-                <div className="mb-3 flex items-center gap-2">
-                  <span className="text-lg">⭐</span>
-                  <h4 className="text-sm font-bold text-[var(--text-primary)]">Key Features</h4>
-                </div>
-                <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
-                  {tool.features.map((feature, idx) => (
-                    <div key={idx} className="flex items-start gap-1">
-                      <span className="mt-0.5 flex-shrink-0 text-teal-500">✓</span>
-                      <span className="text-xs text-[var(--text-secondary)]">{feature}</span>
-                    </div>
+              {section.list && section.list.length > 0 && (
+                <ul className="space-y-2 text-sm text-[var(--text-secondary)]">
+                  {section.list.map((item, idx) => (
+                    <li key={`${item}-${idx}`} className="flex items-start gap-2">
+                      <span className="mt-1 text-teal-500">•</span>
+                      <span>{item}</span>
+                    </li>
                   ))}
-                </div>
-              </div>
+                </ul>
+              )}
 
-              {/* Pros & Cons */}
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div className="rounded-lg border-2 border-green-500 bg-green-50 p-4 dark:bg-green-950">
-                  <div className="mb-3 flex items-center gap-2">
-                    <span className="text-xl">👍</span>
-                    <h4 className="font-bold text-green-700 dark:text-green-300">Pros</h4>
-                  </div>
-                  <ul className="space-y-2">
-                    {tool.pros.map((pro, idx) => (
-                      <li key={idx} className="flex items-start gap-2 text-xs text-green-700 dark:text-green-300">
-                        <span className="mt-0.5 flex-shrink-0">●</span>
-                        <span>{pro}</span>
-                      </li>
-                    ))}
-                  </ul>
+              {section.image && (
+                <div className="overflow-hidden rounded-lg border border-[var(--border)]">
+                  <img
+                    src={section.image}
+                    alt={section.imageCaption || section.heading || "Article section image"}
+                    className="max-h-72 w-full object-cover"
+                  />
+                  {section.imageCaption && (
+                    <p className="border-t border-[var(--border)] bg-[var(--bg-secondary)] px-4 py-2 text-xs text-[var(--text-secondary)]">
+                      {section.imageCaption}
+                    </p>
+                  )}
                 </div>
-                <div className="rounded-lg border-2 border-red-500 bg-red-50 p-4 dark:bg-red-950">
-                  <div className="mb-3 flex items-center gap-2">
-                    <span className="text-xl">👎</span>
-                    <h4 className="font-bold text-red-700 dark:text-red-300">Cons</h4>
-                  </div>
-                  <ul className="space-y-2">
-                    {tool.cons.map((con, idx) => (
-                      <li key={idx} className="flex items-start gap-2 text-xs text-red-700 dark:text-red-300">
-                        <span className="mt-0.5 flex-shrink-0">●</span>
-                        <span>{con}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-
-              {/* Best For */}
-              <div className="rounded-lg border-2 border-yellow-500 bg-yellow-50 p-4 dark:bg-yellow-950">
-                <div className="mb-3 flex items-center gap-2">
-                  <span className="text-xl">💡</span>
-                  <h4 className="font-bold text-yellow-700 dark:text-yellow-300">Best For</h4>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {tool.bestFor.map((item, idx) => (
-                    <span
-                      key={idx}
-                      className="inline-flex items-center gap-1 rounded-full bg-yellow-100 px-3 py-1 text-xs font-medium text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
-                    >
-                      <span>{item.icon}</span>
-                      {item.label}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              {/* Quick Use Cases */}
-              <div className="rounded-lg border border-[var(--border)] bg-blue-50 p-4 dark:bg-blue-950">
-                <div className="mb-3 flex items-center gap-2">
-                  <span className="text-xl">⚡</span>
-                  <h4 className="font-bold text-blue-700 dark:text-blue-300">Quick Use Cases</h4>
-                </div>
-                <div className="grid grid-cols-2 gap-2">
-                  {tool.useCases.map((useCase, idx) => (
-                    <div key={idx} className="flex items-start gap-2">
-                      <span className="mt-0.5 flex-shrink-0">{useCase.icon}</span>
-                      <span className="text-xs text-blue-700 dark:text-blue-300">{useCase.text}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
+              )}
             </div>
           ))}
 
@@ -404,7 +309,7 @@ export function RelatedArticles({ articles }: { articles: Article[] }) {
         {articles.map((related) => (
           <Link
             key={related.slug}
-            href={`/articles/${related.slug}`}
+            href={`/blog/${related.slug}`}
             className="group overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)] no-underline transition-all duration-300 hover:-translate-y-2 hover:shadow-lg hover:border-[var(--accent-purple)]"
           >
             <div className="relative overflow-hidden bg-gray-200 dark:bg-gray-700">

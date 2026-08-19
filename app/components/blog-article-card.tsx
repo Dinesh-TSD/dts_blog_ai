@@ -43,7 +43,7 @@ export function BlogArticleCard({
               </span>
             </div>
             <Link
-              href={`/articles/${article.slug}`}
+              href={`/blog/${article.slug}`}
               className="inline-flex items-center gap-1 text-sm font-semibold text-[var(--accent-purple)] no-underline transition-all duration-300 hover:gap-2"
             >
               Read Article →

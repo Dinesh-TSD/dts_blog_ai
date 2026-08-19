@@ -22,8 +22,8 @@ function mapUser(user: UserDocument): StoredUser {
     name: user.name,
     passwordHash: user.passwordHash ?? null,
     provider: user.provider,
-    picture: user.picture,
-    resetTokenHash: user.resetTokenHash,
+    picture: user.picture ?? undefined,
+    resetTokenHash: user.resetTokenHash ?? undefined,
     resetTokenExpiry: user.resetTokenExpiry?.getTime(),
     createdAt: user.createdAt.getTime(),
   };

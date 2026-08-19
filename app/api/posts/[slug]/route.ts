@@ -18,7 +18,7 @@ export async function GET(_request: Request, { params }: Params) {
 
     await connectDB();
 
-    const post = await Post.findOne({ slug, published: true }).lean();
+    const post = await Post.findOne({ slug }).lean();
 
     if (!post) {
       return NextResponse.json(

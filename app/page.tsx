@@ -173,7 +173,7 @@ export default function Home() {
                     <span className="flex items-center gap-1">⏱️ 8 min read</span>
                   </div>
                   <Link
-                    href="/articles/ai-tools-that-save-hours"
+                    href="/blog/ai-tools-that-save-hours"
                     className="flex items-center gap-1 text-xs font-semibold text-[var(--accent-purple)] no-underline transition-all duration-300 hover:gap-2"
                   >
                     Read Article →
@@ -207,7 +207,7 @@ export default function Home() {
                     <span className="flex items-center gap-1">⏱️ 10 min read</span>
                   </div>
                   <Link
-                    href="/articles/build-modern-website-from-scratch"
+                    href="/blog/build-modern-website-from-scratch"
                     className="flex items-center gap-1 text-xs font-semibold text-[var(--accent-purple)] no-underline transition-all duration-300 hover:gap-2"
                   >
                     Read Article →
@@ -241,7 +241,7 @@ export default function Home() {
                     <span className="flex items-center gap-1">⏱️ 7 min read</span>
                   </div>
                   <Link
-                    href="/articles/best-developer-tools-2026"
+                    href="/blog/best-developer-tools-2026"
                     className="flex items-center gap-1 text-xs font-semibold text-[var(--accent-purple)] no-underline transition-all duration-300 hover:gap-2"
                   >
                     Read Article →
