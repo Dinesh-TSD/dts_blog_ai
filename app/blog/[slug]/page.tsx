@@ -30,7 +30,6 @@ async function fetchPost(slug: string): Promise<PostDocument | null> {
     if (!res.ok) return null;
     const json = await res.json();
     return json.success ? (json.data as PostDocument) : null;
-
   } catch {
     return null;
   }
@@ -95,7 +94,9 @@ export default async function ArticlePage({ params }: Props) {
   // Hard 404 if post not in DB
   if (!article) notFound();
 
-  const relatedPosts = await fetchRelated(slug, article.categorySlug);
+  const relatedPosts = article.categorySlug
+    ? await fetchRelated(slug, article.categorySlug)
+    : [];
   
   return (
     <>
@@ -107,7 +108,6 @@ export default async function ArticlePage({ params }: Props) {
           <RelatedArticles articles={relatedPosts as unknown as Article[]} />
         </div>
         <ArticleSidebar
-          tableOfarticles={article.tableOfContents}
           article={article as unknown as Article}
         />
       </div>

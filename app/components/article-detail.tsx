@@ -268,29 +268,8 @@ export function ArticleDetailContent({
   );
 }
 
-export function ArticleSidebar({
-  tableOfarticles,
-  article
-}: {
-  tableOfarticles?: { id: string; title: string; level: number }[];
-  article?: Article;
-} = {}) {
-  // Build a fallback TOC from the article sections if none was provided.
-  const generatedToc: { id: string; title: string; level: number }[] = [
-    ...(article?.sections ?? []).map((section) => ({
-      id: section.id,
-      title: section.heading,
-      level: 1,
-    })),
-    { id: "faq", title: "Frequently Asked Questions", level: 1 },
-    { id: "conclusion", title: "Conclusion", level: 1 },
-  ];
-
-  const tocData =
-    tableOfarticles && tableOfarticles.length > 0
-      ? tableOfarticles
-      : generatedToc;
-
+export function ArticleSidebar({ article }: { article: Article }) {
+ 
   return (
     <aside className="flex flex-col gap-6">
       {/* Table of articles */}
@@ -299,14 +278,11 @@ export function ArticleSidebar({
           Table of articles
         </h3>
         <nav className="flex flex-col gap-2">
-          {tocData.map((item) => (
+          {article.tableOfContents?.map((item) => (
             <a
               key={item.id}
               href={`#${item.id}`}
-              className={`text-xs hover:text-[var(--accent-purple)] transition-colors ${item.level > 1
-                ? "ml-4 text-[var(--text-secondary)]"
-                : "text-[var(--text-primary)] font-medium"
-                }`}
+              className={`text-xs hover:text-[var(--accent-purple)] transition-colors `}
             >
               {item.title}
             </a>

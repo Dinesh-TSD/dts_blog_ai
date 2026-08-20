@@ -57,7 +57,7 @@ export async function GET(request: NextRequest) {
         .skip(skip)
         .limit(limit)
         .select(
-          "slug title excerpt category categoryColor categorySlug date readTime readMinutes popular image imageAlt tags author authorRole",
+          "slug title excerpt featuredImage category categoryColor categorySlug date readTime readMinutes popular tags author authorRole",
         )
         .lean(),
       Post.countDocuments(filter),

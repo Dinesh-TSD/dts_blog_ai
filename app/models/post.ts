@@ -1,80 +1,263 @@
 import mongoose, { Schema, type InferSchemaType, type Model } from "mongoose";
 
-// ── Sub-schemas ───────────────────────────────────────────────────────────────
+/* =========================
+   TOC Schema
+========================= */
 
-const tocItemSchema = new Schema(
+const TocSchema = new Schema(
   {
-    id:    { type: String, required: true },
-    title: { type: String, required: true },
-    level: { type: Number, required: true },
+    id: {
+      type: String,
+      required: true,
+    },
+
+    title: {
+      type: String,
+      required: true,
+    },
   },
-  { _id: false },
+  { _id: false }
 );
 
-const sectionSchema = new Schema(
+/* =========================
+   Section Schema
+========================= */
+
+const SectionSchema = new Schema(
   {
-    id:         { type: String },
-    heading:    { type: String },
-    paragraphs: { type: [String], required: true, default: [] },
-    list:       { type: [String], default: [] },
-    image:      { type: String },
-    imageCaption: { type: String },
+    id: {
+      type: String,
+      required: true,
+    },
+
+    heading: {
+      type: String,
+      required: true,
+    },
+
+    image: {
+      type: String,
+      required: true,
+    },
+
+    imageAlt: {
+      type: String,
+      required: true,
+    },
+
+    paragraphs: [
+      {
+        type: String,
+        required: true,
+      },
+    ],
   },
-  { _id: false },
+  { _id: false }
 );
 
-const faqSchema = new Schema(
+/* =========================
+   FAQ Schema
+========================= */
+
+const FaqSchema = new Schema(
   {
-    question: { type: String, required: true },
-    answer:   { type: String, required: true },
+    question: {
+      type: String,
+      required: true,
+    },
+
+    answer: {
+      type: String,
+      required: true,
+    },
   },
-  { _id: false },
+  { _id: false }
 );
 
-const conclusionSchema = new Schema(
+/* =========================
+   Conclusion Schema
+========================= */
+
+const ConclusionSchema = new Schema(
   {
-    heading:    { type: String },
-    paragraphs: { type: [String], default: [] },
+    heading: {
+      type: String,
+      required: true,
+      default: "Conclusion",
+    },
+
+    paragraphs: [
+      {
+        type: String,
+        required: true,
+      },
+    ],
   },
-  { _id: false },
+  { _id: false }
 );
 
-// ── Main Post schema ──────────────────────────────────────────────────────────
+/* =========================
+   SEO Schema
+========================= */
 
-const postSchema = new Schema(
+const SeoSchema = new Schema(
   {
-    // ── Article (listing) fields ─────────────────────────────────────────────
-    slug:          { type: String, required: true, unique: true, trim: true, index: true },
-    title:         { type: String, required: true, trim: true },
-    excerpt:       { type: String, required: true },
-    category:      { type: String, required: true },
-    categoryColor: { type: String, required: true },
-    categorySlug:  { type: String, required: true, index: true },
-    date:          { type: String, required: true },
-    readTime:      { type: String, required: true },
-    readMinutes:   { type: Number, required: true },
-    popular:       { type: Boolean, default: false },
-    image:         { type: String, required: true },
-    imageAlt:      { type: String, required: true },
+    metaTitle: {
+      type: String,
+      required: true,
+    },
 
-    // ── ArticleContent (detail) fields ───────────────────────────────────────
-    author:           { type: String, required: true },
-    authorRole:       { type: String, required: true },
-    tags:             { type: [String], default: [] },
-    tableOfContents:  { type: [tocItemSchema], default: [] },
-    sections:         { type: [sectionSchema], default: [] },
-    faqs:             { type: [faqSchema], default: [] },
-    conclusion:       { type: conclusionSchema },
+    metaDescription: {
+      type: String,
+      required: true,
+    },
 
-    // ── Status ───────────────────────────────────────────────────────────────
-    published: { type: Boolean, default: true },
+    keywords: [String],
+
+    canonicalUrl: String,
+
+    openGraph: {
+      title: String,
+      description: String,
+      image: String,
+    },
+
+    twitter: {
+      title: String,
+      description: String,
+      image: String,
+    },
   },
-  { timestamps: true },
+  { _id: false }
 );
+
+/* =========================
+   Author Schema
+========================= */
+
+const AuthorSchema = new Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+    },
+
+    avatar: String,
+
+    role: String,
+  },
+  { _id: false }
+);
+
+/* =========================
+   Featured Image Schema
+========================= */
+
+const FeaturedImageSchema = new Schema(
+  {
+    url: {
+      type: String,
+      required: true,
+    },
+
+    alt: {
+      type: String,
+      required: true,
+    },
+  },
+  { _id: false }
+);
+
+/* =========================
+   Post Schema
+========================= */
+
+const PostSchema = new Schema(
+  {
+    title: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
+    slug: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
+      index: true,
+    },
+
+    excerpt: {
+      type: String,
+      required: true,
+    },
+
+    featuredImage: FeaturedImageSchema,
+
+    author: AuthorSchema,
+
+    category: {
+      type: String,
+      required: true,
+      index: true,
+    },
+    categorySlug: String,
+
+    categoryColor: String,
+
+    tags: [String],
+
+    published: {
+      type: Boolean,
+      default: true,
+    },
+
+    featured: {
+      type: Boolean,
+      default: false,
+    },
+
+    readingTime: {
+      type: Number,
+      default: 1,
+    },
+
+    views: {
+      type: Number,
+      default: 0,
+    },
+
+    publishedAt: {
+      type: Date,
+      default: Date.now,
+    },
+
+    toc: [TocSchema],
+
+    sections: [SectionSchema],
+
+    faq: [FaqSchema],
+
+    conclusion: ConclusionSchema,
+
+    relatedPosts: [String],
+
+    seo: SeoSchema,
+  },
+  {
+    timestamps: true,
+  }
+);
+
+
+
+
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
-export type PostDocument = InferSchemaType<typeof postSchema> & {
+export type PostDocument = InferSchemaType<typeof PostSchema> & {
   _id: mongoose.Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
@@ -86,4 +269,4 @@ export type PostModel = Model<PostDocument>;
 
 export const Post =
   (mongoose.models.Post as PostModel | undefined) ??
-  mongoose.model<PostDocument>("Post", postSchema);
+  mongoose.model<PostDocument>("Post", PostSchema);

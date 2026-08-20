@@ -11,18 +11,13 @@ export function BlogArticleCard({
 }) {
   const imageUrl = article.featuredImage?.url ?? article.image ?? "";
   const imageAlt = article.featuredImage?.alt ?? article.imageAlt ?? article.title;
-
   return (
     <article className="overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)] transition-all duration-300 hover:-translate-y-1 hover:border-[var(--accent-purple)]">
       <div
         className={`flex flex-col md:flex-row ${reverse ? "md:flex-row-reverse" : ""}`}
       >
         <div className="md:w-[42%]">
-          <img
-            src={ article.featuredImage.url}
-            alt={article.featuredImage.alt }
-            className="h-48 w-full bg-[var(--bg-primary)] object-cover md:h-full md:min-h-[220px]"
-          />
+          <img src={imageUrl} alt={imageAlt} />
         </div>
         <div className="flex flex-1 flex-col justify-between p-5 md:p-6">
           <div>
