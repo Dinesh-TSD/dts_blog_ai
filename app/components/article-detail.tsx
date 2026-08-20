@@ -1,6 +1,67 @@
 import Link from "next/link";
 import { NewsletterForm } from "./newsletter-form";
-import { card } from "../lib/site";
+import { btnPrimary, card } from "../lib/site";
+
+type SectionGuidance = {
+  keyFeatures: string[];
+  bestUseCases: string[];
+  tryNowUrl: string;
+};
+
+const defaultSectionGuidance: SectionGuidance = {
+  keyFeatures: [
+    "Clear, focused workflow",
+    "Fast results with minimal setup",
+    "Useful for everyday projects",
+  ],
+  bestUseCases: [
+    "Exploring a new workflow",
+    "Comparing practical options",
+    "Getting a project started",
+  ],
+  tryNowUrl: "#",
+};
+
+const sectionGuidance: Record<string, SectionGuidance> = {
+  chatgpt: {
+    keyFeatures: ["Conversational assistance", "Writing and brainstorming", "Code and file analysis"],
+    bestUseCases: ["Drafting content", "Learning a complex topic", "Working through ideas"],
+    tryNowUrl: "https://chatgpt.com/",
+  },
+  "github copilot": {
+    keyFeatures: ["Inline code suggestions", "IDE-aware context", "Natural-language coding help"],
+    bestUseCases: ["Writing repetitive code", "Exploring unfamiliar APIs", "Reviewing implementation ideas"],
+    tryNowUrl: "https://github.com/features/copilot",
+  },
+  cursor: {
+    keyFeatures: ["AI-first code editor", "Codebase-aware chat", "Fast multi-file edits"],
+    bestUseCases: ["Refactoring a codebase", "Building features quickly", "Debugging with context"],
+    tryNowUrl: "https://www.cursor.com/",
+  },
+  claude: {
+    keyFeatures: ["Long-context analysis", "Careful writing support", "Structured reasoning"],
+    bestUseCases: ["Reviewing long documents", "Planning technical work", "Improving drafts"],
+    tryNowUrl: "https://claude.ai/",
+  },
+};
+
+const aiToolComparison = [
+  ["ChatGPT", "Writing, Chatting", "Yes", "Yes", "$20/month", "★★★★★", "https://chatgpt.com/"],
+  ["Claude", "Writing, Research", "Yes", "Yes", "$20/month", "★★★★★", "https://claude.ai/"],
+  ["Gemini", "Research, Productivity", "Yes with Google", "Yes", "$0/month", "★★★★★", "https://gemini.google.com/"],
+  ["Perplexity", "Research", "Yes", "Yes", "$20/month", "★★★★★", "https://www.perplexity.ai/"],
+  ["GitHub Copilot", "Coding", "No", "Yes", "$10/month", "★★★★★", "https://github.com/features/copilot"],
+  ["Cursor", "Coding", "Yes", "Yes", "$20/month", "★★★★★", "https://www.cursor.com/"],
+  ["Midjourney", "Image Generation", "No", "Yes", "$10/month", "★★★★★", "https://www.midjourney.com/"],
+  ["Runway", "Video Editing", "Yes", "Yes", "$15/month", "★★★★★", "https://runwayml.com/"],
+  ["ElevenLabs", "Voice Generation", "Yes", "Yes", "$5/month", "★★★★★", "https://elevenlabs.io/"],
+  ["Notion AI", "Productivity, Writing", "Yes", "Yes", "$8/month", "★★★★★", "https://www.notion.so/product/ai"],
+] as const;
+
+function getSectionGuidance(heading: string) {
+  const key = heading.trim().toLowerCase();
+  return sectionGuidance[key] ?? defaultSectionGuidance;
+}
 
 export type Article = {
   categorySlug: string;
@@ -146,24 +207,6 @@ export function ArticleDetailContent({
               {article.category}
             </span>
           </div>
-          <div className="flex items-center gap-3 border-y border-[var(--border)] py-4">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--accent-purple)] font-bold text-white">
-              {article.author.name.charAt(0).toUpperCase()}
-            </div>
-            <div>
-              <p className="text-sm font-semibold text-[var(--text-primary)]">{article.author.name}</p>
-              <p className="text-xs text-[var(--text-secondary)]">{article.author.role}</p>
-            </div>
-          </div>
-          {article.tags.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {article.tags.map((tag) => (
-                <span key={tag} className="rounded-full bg-[var(--tag-bg)] px-3 py-1 text-xs text-[var(--text-secondary)]">
-                  #{tag}
-                </span>
-              ))}
-            </div>
-          )}
         </div>
 
         {/* Main article - Full Width */}
@@ -182,7 +225,7 @@ export function ArticleDetailContent({
             <div
               id={section.id || (section.heading ? section.heading.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") : undefined)}
               key={`${section.heading ?? "section"}-${sectionIdx}`}
-              className="space-y-5 rounded-xl border border-[var(--border)] p-6 scroll-mt-6"
+              className="space-y-4  p-6 scroll-mt-6"
             >
               {section.heading && (
                 <h2 className="text-2xl font-bold text-[var(--text-primary)]">
@@ -221,8 +264,89 @@ export function ArticleDetailContent({
                   )}
                 </div>
               )}
+
+              {(() => {
+                const guidance = getSectionGuidance(section.heading);
+
+                return (
+                  <div className="mt-6 grid gap-5 rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)] p-5 md:grid-cols-2">
+                    <div>
+                      <h3 className="text-sm font-bold text-[var(--text-primary)]">Key features</h3>
+                      <ul className="mt-3 space-y-2 text-sm text-[var(--text-secondary)]">
+                        {guidance.keyFeatures.map((feature) => (
+                          <li key={feature} className="flex items-start gap-2">
+                            <span className="text-teal-500">•</span>
+                            <span>{feature}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-bold text-[var(--text-primary)]">Best use cases</h3>
+                      <ul className="mt-3 space-y-2 text-sm text-[var(--text-secondary)]">
+                        {guidance.bestUseCases.map((useCase) => (
+                          <li key={useCase} className="flex items-start gap-2">
+                            <span className="text-teal-500">•</span>
+                            <span>{useCase}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    <Link
+                      href={guidance.tryNowUrl}
+                      className={`${btnPrimary} w-fit text-sm no-underline md:col-span-2`}
+                      target={guidance.tryNowUrl.startsWith("http") ? "_blank" : undefined}
+                      rel={guidance.tryNowUrl.startsWith("http") ? "noreferrer" : undefined}
+                    >
+                      Try now →
+                    </Link>
+                  </div>
+                );
+              })()}
             </div>
           ))}
+
+          <section className="space-y-4" aria-labelledby="ai-tool-comparison-heading">
+            <div>
+              <h2 id="ai-tool-comparison-heading" className="text-2xl font-bold text-[var(--text-primary)]">
+                Top 10 AI Tools Comparison
+              </h2>
+              <p className="mt-2 text-sm leading-relaxed text-[var(--text-secondary)]">
+                A quick guide to choosing the right AI tool for your workflow.
+              </p>
+            </div>
+            <div className="overflow-x-auto rounded-xl border border-[var(--border)]">
+              <table className="w-full min-w-[860px] border-collapse text-left text-sm">
+                <caption className="sr-only">Comparison of 10 popular AI tools</caption>
+                <thead className="bg-[var(--bg-secondary)] text-xs tracking-wide text-[var(--text-secondary)] uppercase">
+                  <tr>
+                    <th scope="col" className="px-4 py-3 font-semibold">Tool</th>
+                    <th scope="col" className="px-4 py-3 font-semibold">Best for</th>
+                    <th scope="col" className="px-4 py-3 font-semibold">Free plan</th>
+                    <th scope="col" className="px-4 py-3 font-semibold">Paid plan</th>
+                    <th scope="col" className="px-4 py-3 font-semibold">Starting price</th>
+                    <th scope="col" className="px-4 py-3 font-semibold">Our rating</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[var(--border)]">
+                  {aiToolComparison.map(([name, bestFor, freePlan, paidPlan, startingPrice, rating, website]) => (
+                    <tr key={name} className="text-[var(--text-secondary)] transition-colors hover:bg-[var(--bg-secondary)]/60">
+                      <th scope="row" className="whitespace-nowrap px-4 py-3 font-semibold text-[var(--text-primary)]">
+                        <a href={website} target="_blank" rel="noreferrer" className="hover:text-[var(--accent-blue)] hover:underline">
+                          {name}
+                        </a>
+                      </th>
+                      <td className="px-4 py-3">{bestFor}</td>
+                      <td className="px-4 py-3">{freePlan}</td>
+                      <td className="px-4 py-3">{paidPlan}</td>
+                      <td className="whitespace-nowrap px-4 py-3">{startingPrice}</td>
+                      <td className="whitespace-nowrap px-4 py-3 text-amber-500" aria-label={`${rating.length} out of 5 stars`}>{rating}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
 
           {/* FAQ Section */}
           {article.faq && article.faq.length > 0 && (
