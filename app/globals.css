@@ -21,6 +21,7 @@
   --hero-img-opacity: 1;
   --heading-strong: #ffffff;
   --tag-bg: rgba(0, 0, 0, 0.3);
+  --article-body-text: #cbd5e1;
 }
 
 [data-theme="light"] {
@@ -41,6 +42,7 @@
   --hero-img-opacity: 0.4;
   --heading-strong: #0f172a;
   --tag-bg: rgba(0, 0, 0, 0.05);
+  --article-body-text: #334155;
 }
 
 html {
@@ -54,6 +56,11 @@ html[data-theme="light"] {
 body {
   background-color: var(--bg-primary);
   color: var(--text-primary);
+}
+
+.article-section-paragraph {
+  overflow-wrap: anywhere;
+  text-wrap: pretty;
 }
 
 .hero-bg-img {
