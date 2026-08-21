@@ -5,21 +5,6 @@ import { Inter } from "next/font/google";
 
 const inter = Inter({ subsets: ["latin"] });
 
-
-const aiToolComparison = [
-  ["ChatGPT", "Writing, Chatting", "Yes", "Yes", "$20/month", "★★★★★", "https://chatgpt.com/"],
-  ["Claude", "Writing, Research", "Yes", "Yes", "$20/month", "★★★★★", "https://claude.ai/"],
-  ["Gemini", "Research, Productivity", "Yes with Google", "Yes", "$0/month", "★★★★★", "https://gemini.google.com/"],
-  ["Perplexity", "Research", "Yes", "Yes", "$20/month", "★★★★★", "https://www.perplexity.ai/"],
-  ["GitHub Copilot", "Coding", "No", "Yes", "$10/month", "★★★★★", "https://github.com/features/copilot"],
-  ["Cursor", "Coding", "Yes", "Yes", "$20/month", "★★★★★", "https://www.cursor.com/"],
-  ["Midjourney", "Image Generation", "No", "Yes", "$10/month", "★★★★★", "https://www.midjourney.com/"],
-  ["Runway", "Video Editing", "Yes", "Yes", "$15/month", "★★★★★", "https://runwayml.com/"],
-  ["ElevenLabs", "Voice Generation", "Yes", "Yes", "$5/month", "★★★★★", "https://elevenlabs.io/"],
-  ["Notion AI", "Productivity, Writing", "Yes", "Yes", "$8/month", "★★★★★", "https://www.notion.so/product/ai"],
-] as const;
-
-
 export type Article = {
   categorySlug: string;
   categoryColor: string | undefined;
