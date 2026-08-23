@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { BlogArticleCard } from "./blog-article-card";
 import { Pagination } from "./pagination";
 import { Article } from "./article-detail";
+import { fetchAllPosts } from "../lib/posts";
 
 const PAGE_SIZE = 6;
 const filterTabs = [
@@ -22,31 +23,28 @@ const categoryLabelMap: Record<string, string> = {
 };
 
 
-type PostsApiResponse = {
-  success: boolean;
-  data?: Article[];
-  message?: string;
-  pagination?: {
-    total: number;
-    page: number;
-    limit: number;
-    totalPages: number;
-  };
-};
-
-export function BlogListing({articles}: {articles: Article[]}) {
-  const [articlist, setArticles] = useState<Article[]>([]);
+export function BlogListing() {
+  const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [query, setQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
   const [category, setCategory] = useState("all");
   const [activeTab, setActiveTab] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      setDebouncedQuery(query);
+    }, 350);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [query]);
+
+  useEffect(() => {
     setCurrentPage(1);
-  }, [query, category, activeTab]);
+  }, [debouncedQuery, category, activeTab]);
 
   useEffect(() => {
     async function loadPosts() {
@@ -54,27 +52,15 @@ export function BlogListing({articles}: {articles: Article[]}) {
         setLoading(true);
         setError(null);
 
-        const params = new URLSearchParams({
-          limit: String(PAGE_SIZE),
-          page: String(currentPage),
+        const posts = await fetchAllPosts({
           category,
           tab: activeTab,
+          query: debouncedQuery.trim(),
+          published: true,
         });
 
-        if (query.trim()) {
-          params.set("query", query.trim());
-        }
-
-        const res = await fetch(`/api/posts?${params.toString()}`);
-        if (!res.ok) throw new Error("Failed to fetch posts");
-
-        const json = (await res.json()) as PostsApiResponse;
-        if (!json.success) throw new Error(json.message ?? "Unknown error");
-        if (!Array.isArray(json.data)) {
-          throw new Error("Invalid posts data received");
-        }
-        setArticles(json.data as Article[]);
-        setTotalPages(json.pagination?.totalPages ?? 1);
+        setArticles(posts);
+        setTotalPages(Math.max(1, Math.ceil(posts.length / PAGE_SIZE)));
       } catch (err) {
         setError(err instanceof Error ? err.message : "Something went wrong");
       } finally {
@@ -83,7 +69,7 @@ export function BlogListing({articles}: {articles: Article[]}) {
     }
 
     loadPosts();
-  }, [category, activeTab, query, currentPage]);
+  }, [category, activeTab, debouncedQuery]);
 
   const categoryOptions = useMemo(() => {
     const uniqueSlugs = Array.from(
@@ -126,7 +112,7 @@ export function BlogListing({articles}: {articles: Article[]}) {
     setCurrentPage(1);
   };
 
-  if (loading) {
+  if (loading && articles.length === 0) {
     return (
       <div className="flex w-full flex-col gap-6">
         <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)] p-10 text-center">
