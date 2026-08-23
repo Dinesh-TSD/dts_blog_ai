@@ -3,6 +3,8 @@ import { AdSidebar } from "../components/ad-sidebar";
 import { BlogListing } from "../components/blog-listing";
 import { Footer } from "../components/footer";
 import { Navbar } from "../components/navbar";
+import {getPosts} from ".././lib/actions/posts";
+import type { Article } from ".././components/article-detail";
 
 export const metadata: Metadata = {
   title: "Blog | DTS TECH AI",
@@ -10,7 +12,8 @@ export const metadata: Metadata = {
     "Browse practical tech articles on AI, web development, developer tools, and the latest trends.",
 };
 
-export default function BlogPage() {
+export default async function BlogPage() {
+  const posts = await getPosts({ limit: 12 });
   return (
     <>
       <Navbar />
@@ -38,7 +41,7 @@ export default function BlogPage() {
 
       <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-8 px-6 py-10 lg:grid-cols-[1fr_6fr_1fr]">
         <AdSidebar side="left" />
-        <BlogListing />
+        <BlogListing articles={posts as unknown as Article[]} />
         <AdSidebar side="right" />
       </div>
 

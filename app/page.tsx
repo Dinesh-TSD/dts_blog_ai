@@ -3,13 +3,33 @@ import { Footer } from "./components/footer";
 import { Navbar } from "./components/navbar";
 import { NewsletterForm } from "./components/newsletter-form";
 import { card } from "./lib/site";
+import { getPosts } from "./lib/actions/posts";
+import type { PostDocument } from "./models/post";
+import { Article } from "./components/article-detail";
+import { FeaturedPosts } from "./components/home/featured-posts";
+import { TrendingPosts } from "./components/home/trending-posts";
+import { RecentPosts } from "./components/home/recent-posts";
 
 const btnPrimary =
   "inline-flex cursor-pointer items-center gap-2 rounded-lg border-none bg-[var(--accent-purple)] px-6 py-3 text-base font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:opacity-90";
 const btnSecondary =
   "inline-flex cursor-pointer items-center gap-2 rounded-lg border border-[var(--border)] bg-transparent px-[25px] py-[13px] text-base font-semibold text-[var(--btn-secondary-text)] transition-all duration-300 hover:border-[var(--accent-purple)] hover:bg-[rgba(109,40,217,0.1)]";
 
-export default function Home() {
+export default async function Home() {
+  type HomeData = {
+    featuredPosts: Article[];
+    trendingPosts: Article[];
+    recentPosts: Article[];
+  };
+  const homeData = await getPosts({
+    type: "home",
+  }) as unknown as HomeData;
+
+  const {
+    featuredPosts,
+    trendingPosts,
+    recentPosts,
+  } = homeData;
   return (
     <>
       <Navbar />
@@ -87,8 +107,89 @@ export default function Home() {
       </section>
 
       {/* MAIN CONTENT GRID */}
-      <div className="mx-auto grid max-w-7xl grid-cols-[284px_1fr_284px] gap-8 px-6 py-8 max-lg:grid-cols-1 max-lg:gap-6">
-        <aside id="categories" className="flex flex-col gap-4">
+      <div className="mx-auto grid max-w-7xl grid-cols-[minmax(0,1fr)_284px] gap-8 px-6 py-8 max-lg:grid-cols-1 max-lg:gap-6">
+
+        {/*Featured Articles*/}
+        <main className="flex flex-col gap-1 lg:col-start-1 lg:row-span-2 lg:row-start-1">
+
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="flex items-center gap-2 text-xl font-bold text-[var(--text-primary)]">
+              ⭐ Featured Articles
+            </h2>
+            <Link
+              href="/blog"
+              className="flex cursor-pointer items-center gap-1 rounded border border-[var(--border)] bg-transparent px-[13px] py-[5px] text-sm text-[var(--text-primary)] no-underline transition-all duration-300 hover:border-[var(--accent-purple)] hover:bg-[rgba(109,40,217,0.1)]"
+            >
+              View All →
+            </Link>
+          </div>
+
+          <p className="mb-3 text-sm text-[var(--text-secondary)]">
+            Our hand-picked guides covering the tech topics worth your attention
+            right now.  
+          </p>
+
+          <div className="grid grid-cols-3 gap-5 max-xl:grid-cols-2 max-lg:grid-cols-1">
+
+            {featuredPosts.map((post) => (
+              <FeaturedPosts key={post.slug} featuredPost={post} />
+            ))}  
+          </div>
+
+          <section className="mt-8">
+            <div className="mb-3 flex items-center justify-between">
+              <h2 className="flex items-center gap-2 text-xl font-bold text-[var(--text-primary)]">
+                🔥 Trending Articles
+              </h2>
+              <Link
+                href="/blog"
+                className="flex cursor-pointer items-center gap-1 rounded border border-[var(--border)] bg-transparent px-[13px] py-[5px] text-sm text-[var(--text-primary)] no-underline transition-all duration-300 hover:border-[var(--accent-purple)] hover:bg-[rgba(109,40,217,0.1)]"
+              >
+                View All →
+              </Link>
+            </div>
+
+            <p className="mb-3 text-sm text-[var(--text-secondary)]">
+              The conversations and guides readers are exploring most this week.
+            </p>
+
+            <div className="grid grid-cols-3 gap-5 max-xl:grid-cols-2 max-lg:grid-cols-1">
+              {trendingPosts.map((post) => (
+                <TrendingPosts key={post.slug} trendingPost={post} />
+              ))}
+            </div>
+          </section>
+
+          <section className="mt-8">
+            <div className="mb-3 flex items-center justify-between">
+              <h2 className="flex items-center gap-2 text-xl font-bold text-[var(--text-primary)]">
+                🕒 Recent Articles
+              </h2>
+              <Link
+                href="/blog"
+                className="flex cursor-pointer items-center gap-1 rounded border border-[var(--border)] bg-transparent px-[13px] py-[5px] text-sm text-[var(--text-primary)] no-underline transition-all duration-300 hover:border-[var(--accent-purple)] hover:bg-[rgba(109,40,217,0.1)]"
+              >
+                View All →
+              </Link>
+            </div>
+
+            <p className="mb-3 text-sm text-[var(--text-secondary)]">
+              The conversations and guides readers are exploring most this week.
+            </p>
+
+            <div className="grid grid-cols-3 gap-5 max-xl:grid-cols-2 max-lg:grid-cols-1">
+              {recentPosts.map((post) => (
+                <RecentPosts key={post.slug} recentPost={post} />
+              ))}
+            </div>
+          </section>
+
+
+        </main>
+
+
+
+        <aside className="flex flex-col gap-4 lg:col-start-2 lg:row-start-1">
           <div className={`${card} flex flex-col gap-4`}>
             <div className="flex items-center gap-2 text-base font-semibold text-[var(--text-primary)]">
               <span>🏷️</span>
@@ -127,132 +228,6 @@ export default function Home() {
               View All Categories →
             </Link>
           </div>
-        </aside>
-
-        <main className="flex flex-col gap-1">
-          <div className="mb-3 flex items-center justify-between">
-            <h2 className="flex items-center gap-2 text-xl font-bold text-[var(--text-primary)]">
-              ⭐ Featured Articles
-            </h2>
-            <Link
-              href="/blog"
-              className="flex cursor-pointer items-center gap-1 rounded border border-[var(--border)] bg-transparent px-[13px] py-[5px] text-sm text-[var(--text-primary)] no-underline transition-all duration-300 hover:border-[var(--accent-purple)] hover:bg-[rgba(109,40,217,0.1)]"
-            >
-              View All →
-            </Link>
-          </div>
-
-          <p className="mb-3 text-sm text-[var(--text-secondary)]">
-            Our hand-picked guides covering the tech topics worth your attention
-            right now.
-          </p>
-
-          <div className="grid grid-cols-2 gap-5 max-lg:grid-cols-1">
-            <article className="flex flex-col overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)] transition-all duration-300 hover:-translate-y-1 hover:border-[var(--accent-purple)]">
-              <img
-                src="https://www.figma.com/api/mcp/asset/a5e49b01-92e9-4de6-a15d-f70d8d594cbe.png"
-                alt="AI Tools"
-                className="h-32 w-full bg-[var(--bg-primary)] object-cover"
-              />
-              <div className="flex flex-1 flex-col justify-between p-4">
-                <div>
-                  <span className="mb-2 inline-flex w-fit items-center rounded bg-[#2563eb] px-2 py-0.5 text-[10px] font-bold tracking-wide text-white uppercase">
-                    AI TOOLS
-                  </span>
-                  <h3 className="mb-2 text-sm leading-tight font-bold text-[var(--text-primary)]">
-                    10 AI Tools That Can Save You Hours Every Week
-                  </h3>
-                  <p className="mb-4 text-xs leading-snug text-[var(--text-secondary)]">
-                    From writing and research to coding and automation, discover
-                    practical AI tools...
-                  </p>
-                </div>
-                <div>
-                  <div className="mb-3 flex items-center justify-between text-[10px] text-[var(--text-secondary)]">
-                    <span className="flex items-center gap-1">📅 Jul 28, 2026</span>
-                    <span className="flex items-center gap-1">⏱️ 8 min read</span>
-                  </div>
-                  <Link
-                    href="/blog/ai-tools-that-save-hours"
-                    className="flex items-center gap-1 text-xs font-semibold text-[var(--accent-purple)] no-underline transition-all duration-300 hover:gap-2"
-                  >
-                    Read Article →
-                  </Link>
-                </div>
-              </div>
-            </article>
-
-            <article className="flex flex-col overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)] transition-all duration-300 hover:-translate-y-1 hover:border-[var(--accent-purple)]">
-              <img
-                src="https://www.figma.com/api/mcp/asset/f93eda2e-a012-476d-a63b-90bd8b74c16b.png"
-                alt="Web Development"
-                className="h-32 w-full bg-[var(--bg-primary)] object-cover"
-              />
-              <div className="flex flex-1 flex-col justify-between p-4">
-                <div>
-                  <span className="mb-2 inline-flex w-fit items-center rounded bg-[#9333ea] px-2 py-0.5 text-[10px] font-bold tracking-wide text-white uppercase">
-                    WEB DEVELOPMENT
-                  </span>
-                  <h3 className="mb-2 text-sm leading-tight font-bold text-[var(--text-primary)]">
-                    How to Build a Modern Website From Scratch
-                  </h3>
-                  <p className="mb-4 text-xs leading-snug text-[var(--text-secondary)]">
-                    A beginner-friendly look at the essential technologies,
-                    tools, and steps you need...
-                  </p>
-                </div>
-                <div>
-                  <div className="mb-3 flex items-center justify-between text-[10px] text-[var(--text-secondary)]">
-                    <span className="flex items-center gap-1">📅 Jul 27, 2026</span>
-                    <span className="flex items-center gap-1">⏱️ 10 min read</span>
-                  </div>
-                  <Link
-                    href="/blog/build-modern-website-from-scratch"
-                    className="flex items-center gap-1 text-xs font-semibold text-[var(--accent-purple)] no-underline transition-all duration-300 hover:gap-2"
-                  >
-                    Read Article →
-                  </Link>
-                </div>
-              </div>
-            </article>
-
-            <article className="col-span-2 flex flex-col overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)] transition-all duration-300 hover:-translate-y-1 hover:border-[var(--accent-purple)] max-lg:col-span-1">
-              <img
-                src="https://www.figma.com/api/mcp/asset/1598bfc7-929a-46ea-8ea3-24b48cb8ae66.png"
-                alt="Developer Tools"
-                className="h-32 w-full bg-[var(--bg-primary)] object-cover"
-              />
-              <div className="flex flex-1 flex-col justify-between p-4">
-                <div>
-                  <span className="mb-2 inline-flex w-fit items-center rounded bg-[#4f46e5] px-2 py-0.5 text-[10px] font-bold tracking-wide text-white uppercase">
-                    DEVELOPER TOOLS
-                  </span>
-                  <h3 className="mb-2 text-sm leading-tight font-bold text-[var(--text-primary)]">
-                    Best Developer Tools for Faster Coding in 2026
-                  </h3>
-                  <p className="mb-4 text-xs leading-snug text-[var(--text-secondary)]">
-                    Explore the tools developers are using to write better code,
-                    debug faster...
-                  </p>
-                </div>
-                <div>
-                  <div className="mb-3 flex items-center justify-between text-[10px] text-[var(--text-secondary)]">
-                    <span className="flex items-center gap-1">📅 Jul 26, 2026</span>
-                    <span className="flex items-center gap-1">⏱️ 7 min read</span>
-                  </div>
-                  <Link
-                    href="/blog/best-developer-tools-2026"
-                    className="flex items-center gap-1 text-xs font-semibold text-[var(--accent-purple)] no-underline transition-all duration-300 hover:gap-2"
-                  >
-                    Read Article →
-                  </Link>
-                </div>
-              </div>
-            </article>
-          </div>
-        </main>
-
-        <aside className="flex flex-col gap-4">
           <div className={`${card} flex flex-col gap-1`}>
             <div className="text-xs font-semibold text-[var(--accent-purple)]">
               Stay in the Loop
@@ -277,56 +252,35 @@ export default function Home() {
         </aside>
       </div>
 
-      {/* TRENDING SECTION */}
-      <section className="mx-auto flex max-w-7xl flex-col gap-6 px-6 pb-8">
-        <h2 className="flex items-center gap-2 text-xl font-bold text-[var(--text-primary)]">
-          🔥 Trending Now
-        </h2>
-
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-6 max-md:grid-cols-1">
-          {[
-            {
-              num: "01",
-              img: "https://www.figma.com/api/mcp/asset/768e86ad-b702-4d0a-ae6b-5774779cc3f3.png",
-              alt: "JavaScript",
-              title: "How AI Coding Tools Are Changing Software Development",
-              category: "Artificial Intelligence",
-            },
-            {
-              num: "02",
-              img: "https://www.figma.com/api/mcp/asset/50ff4793-8f1e-4f28-8b06-189ea5d73c2c.png",
-              alt: "VS Code",
-              title: "The Best Free Tools Every Web Developer Should Know",
-              category: "Web Development",
-            },
-            {
-              num: "03",
-              img: "https://www.figma.com/api/mcp/asset/0439b866-6790-4f4c-a57f-80cf1c703879.png",
-              alt: "Python",
-              title: "What Is Generative AI? A Simple Guide for Beginners",
-              category: "AI",
-            },
-          ].map((item) => (
-            <article
-              key={item.num}
-              className="flex items-center gap-4 rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)] p-[21px] transition-all duration-300 hover:border-[var(--accent-purple)]"
+      <section
+        aria-labelledby="newsletter-heading"
+        className="border-y border-[var(--border)] bg-[var(--bg-primary)] px-6 py-16"
+      >
+        <div className="mx-auto max-w-7xl rounded-2xl border border-[var(--glass-border)] bg-[var(--bg-secondary)] p-6 text-center shadow-[0_20px_60px_rgba(0,0,0,0.18)] md:p-10">
+          <div className="mx-auto max-w-2xl">
+            <p className="mb-2 text-sm font-semibold text-[var(--accent-purple)]">
+              📬 DTS Tech AI Newsletter
+            </p>
+            <h2
+              id="newsletter-heading"
+              className="mx-auto mb-3 max-w-2xl text-center text-3xl leading-tight font-bold text-[var(--text-primary)]"
             >
-              <div className="min-w-[30px] text-center text-xl font-bold text-[var(--trending-num)]">
-                {item.num}
-              </div>
-              <img
-                src={item.img}
-                alt={item.alt}
-                className="size-16 rounded bg-[var(--bg-primary)] object-cover"
-              />
-              <div className="flex flex-1 flex-col gap-2">
-                <h3 className="text-sm leading-snug font-semibold text-[var(--text-primary)]">
-                  {item.title}
-                </h3>
-                <p className="text-xs text-[var(--text-secondary)]">{item.category}</p>
-              </div>
-            </article>
-          ))}
+              Practical AI, web development, and technology insights in your inbox
+            </h2>
+            <p className="max-w-2xl text-base leading-relaxed text-[var(--text-secondary)]">
+              Join developers, builders, and curious minds who read DTS Tech AI
+              for clear tutorials, useful developer tools, software guides, and
+              actionable updates from the fast-moving world of technology.
+            </p>
+          </div>
+
+          <div className="mt-9 border-t border-[var(--border)] pt-8">
+            <NewsletterForm fullWidth />
+            <p className="text-center text-xs leading-relaxed text-[var(--text-secondary)]">
+              Free to join. We use your details only to send relevant AI, web
+              development, and technology updates. Unsubscribe anytime.
+            </p>
+          </div>
         </div>
       </section>
 

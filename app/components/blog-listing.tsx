@@ -34,8 +34,8 @@ type PostsApiResponse = {
   };
 };
 
-export function BlogListing() {
-  const [articles, setArticles] = useState<Article[]>([]);
+export function BlogListing({articles}: {articles: Article[]}) {
+  const [articlist, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [query, setQuery] = useState("");

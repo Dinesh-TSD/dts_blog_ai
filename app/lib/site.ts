@@ -2,6 +2,19 @@ export const BRAND_NAME = "DTS TECH AI";
 export const BRAND_TAGLINE =
   "Practical tech insights for developers, builders, and learners.";
 
+export function formatArticleDate(date?: string | Date) {
+  if (!date) return "Date unavailable";
+
+  const parsedDate = new Date(date);
+  if (Number.isNaN(parsedDate.getTime())) return "Date unavailable";
+
+  return parsedDate.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+
 export const btnPrimary =
   "inline-flex cursor-pointer items-center gap-2 rounded-lg border-none bg-[var(--accent-purple)] px-6 py-3 text-base font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:opacity-90";
 
