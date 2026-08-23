@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { NewsletterForm } from "./newsletter-form";
+import { NewsletterForm } from "./home/newsletter-form";
 import { btnPrimary, card } from "../lib/site";
 import { Inter } from "next/font/google";
 

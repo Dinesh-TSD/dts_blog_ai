@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Footer } from "../components/footer";
 import { Navbar } from "../components/navbar";
-import { NewsletterForm } from "../components/newsletter-form";
+import { NewsletterForm } from "../components/home/newsletter-form";
 import { PageHero } from "../components/page-hero";
 import { BRAND_NAME, btnPrimary, card } from "../lib/site";
 
