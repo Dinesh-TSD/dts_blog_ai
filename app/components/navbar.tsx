@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BrandLogo } from "./brand-logo";
+import { Icon } from "./icon";
 import { ThemeToggle } from "./theme-toggle";
 import { iconBtn, navLinkActiveClass } from "../lib/site";
 
@@ -38,11 +39,11 @@ export function Navbar() {
 
         <div className="flex items-center gap-4">
           <ThemeToggle />
-          <button type="button" className={iconBtn} title="Search">
-            🔍
+          <button type="button" className={iconBtn} title="Search" aria-label="Search">
+            <Icon name="search" />
           </button>
-          <button type="button" className={iconBtn} title="Favorites">
-            ★
+          <button type="button" className={iconBtn} title="Favorites" aria-label="Favorites">
+            <Icon name="star" />
           </button>
           <Link
             href="/login"

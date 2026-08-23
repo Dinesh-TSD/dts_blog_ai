@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Article } from "../../components/article-detail";
 import { formatArticleDate } from "../../lib/site";
+import { Icon } from "../icon";
 
 
 export function RecentPosts({ recentPost }: { recentPost: Article }) {
@@ -31,8 +32,14 @@ export function RecentPosts({ recentPost }: { recentPost: Article }) {
                           </div>
                           <div>
                             <div className="mb-3 flex items-center justify-between text-[10px] text-[var(--text-secondary)]">
-                              <span className="flex items-center gap-1">📅 {formatArticleDate(recentPost.createdAt ?? recentPost.publishedAt)}</span>
-                              <span className="flex items-center gap-1">⏱️ {recentPost.readingTime} min read</span>
+                              <span className="flex items-center gap-1">
+                                <Icon name="calendar" size={13} />
+                                {formatArticleDate(recentPost.createdAt ?? recentPost.publishedAt)}
+                              </span>
+                              <span className="flex items-center gap-1">
+                                <Icon name="clock" size={13} />
+                                {recentPost.readingTime} min read
+                              </span>
                             </div>
                             <Link
                               href={`/blog/${recentPost.slug}`}

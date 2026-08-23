@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Article } from "../../components/article-detail";
 import { formatArticleDate } from "../../lib/site";
+import { Icon } from "../icon";
 
 export function TrendingPosts({ trendingPost }: { trendingPost: Article }) {
     const imageUrl = trendingPost.featuredImage?.url ?? trendingPost.image ?? "";
@@ -30,8 +31,14 @@ export function TrendingPosts({ trendingPost }: { trendingPost: Article }) {
                 </div>
                 <div>
                     <div className="mb-3 flex items-center justify-between text-[10px] text-[var(--text-secondary)]">
-                        <span className="flex items-center gap-1">📅 {formatArticleDate(trendingPost.createdAt ?? trendingPost.publishedAt)}</span>
-                        <span className="flex items-center gap-1">⏱️ {trendingPost.readingTime} min read</span>
+                        <span className="flex items-center gap-1">
+                            <Icon name="calendar" size={13} />
+                            {formatArticleDate(trendingPost.createdAt ?? trendingPost.publishedAt)}
+                        </span>
+                        <span className="flex items-center gap-1">
+                            <Icon name="clock" size={13} />
+                            {trendingPost.readingTime} min read
+                        </span>
                     </div>
                     <Link
                         href={`/blog/${trendingPost.slug}`}

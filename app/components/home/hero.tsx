@@ -1,5 +1,6 @@
 import { btnPrimary, btnSecondary } from "@/app/lib/dashboard";
 import Link from "next/link";
+import { Icon } from "../icon";
 
 
 export default function Hero() {
@@ -10,13 +11,13 @@ export default function Hero() {
                   src="/herobg.png"
                   alt=""
                   aria-hidden
-                  className="hero-bg-img absolute inset-0 h-full w-full min-w-full object-cover object-right"
+                  className=" absolute inset-0 h-full w-full min-w-full object-cover object-right"
                 />
                 <div className="hero-overlay absolute inset-0" />
                 <div className="relative z-10 mx-auto grid max-w-7xl grid-cols-2 gap-12 px-6 py-[49px] max-lg:grid-cols-1 max-lg:gap-6">
                   <div className="flex flex-col gap-6">
                     <div className="inline-flex w-fit items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--tag-bg)] px-[13px] py-[5px]">
-                      <span className="text-xs">🔥</span>
+                      <Icon name="fire" size={14} />
                       <span className="text-xs font-medium text-[var(--text-secondary)]">
                         Tech • AI • Web Development • Apps
                       </span>
@@ -41,7 +42,8 @@ export default function Hero() {
                         Explore Latest Articles →
                       </Link>
                       <button type="button" className={btnSecondary}>
-                        📂 Browse Tech Topics
+                        <Icon name="archive" size={16} />
+                        Browse Tech Topics
                       </button>
                     </div>
         

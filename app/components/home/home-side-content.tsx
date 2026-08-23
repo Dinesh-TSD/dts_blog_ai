@@ -1,23 +1,24 @@
 import { card } from "@/app/lib/site";
 import Link from "next/link";
+import { Icon } from "../icon";
 
 export function HomeSideContent() {
     return(
         <aside className="flex flex-col gap-4 lg:col-start-2 lg:row-start-1">
                         <div className={`${card} flex flex-col gap-4`}>
                             <div className="flex items-center gap-2 text-base font-semibold text-[var(--text-primary)]">
-                                <span>🏷️</span>
+                                <Icon name="tag" />
                                 Explore by Category
                             </div>
         
                             <div className="flex flex-col gap-[11.5px]">
                                 {[
-                                    ["#ai", "🤖", "Artificial Intelligence", "28"],
-                                    ["#web", "🌐", "Web Development", "42"],
-                                    ["#apps", "📱", "App Development", "35"],
-                                    ["#tools", "⚙️", "Developer Tools", "18"],
-                                    ["#software", "💾", "Software & Apps", "25"],
-                                    ["#guides", "📖", "Tech Guides", "30"],
+                                    ["#ai", "bot", "Artificial Intelligence", "28"],
+                                    ["#web", "globe", "Web Development", "42"],
+                                    ["#apps", "smartphone", "App Development", "35"],
+                                    ["#tools", "settings", "Developer Tools", "18"],
+                                    ["#software", "archive", "Software & Apps", "25"],
+                                    ["#guides", "book", "Tech Guides", "30"],
                                 ].map(([href, icon, label, count]) => (
                                     <Link
                                         key={href}
@@ -25,7 +26,7 @@ export function HomeSideContent() {
                                         className="flex items-center justify-between text-sm font-medium text-[var(--text-secondary)] no-underline transition-colors duration-300 hover:text-[var(--text-primary)]"
                                     >
                                         <div className="flex items-center gap-2">
-                                            <span className="h-3.5 w-4">{icon}</span>
+                                            <Icon name={icon as Parameters<typeof Icon>[0]["name"]} size={15} />
                                             <span>{label}</span>
                                         </div>
                                         <span className="rounded bg-[var(--badge-bg)] px-2 py-0.5 text-xs text-[var(--text-secondary)]">
@@ -48,7 +49,7 @@ export function HomeSideContent() {
                             </div>
         
                             <div className="mb-1 flex items-center gap-2 text-base font-semibold text-[var(--text-primary)]">
-                                <span>📬</span>
+                                <Icon name="mail" />
                                 Get the Best of Tech, Straight to Your Inbox
                             </div>
         

@@ -5,6 +5,7 @@ import { FeaturedPosts } from "./featured-posts";
 import { RecentPosts } from "./recent-posts";
 import { TrendingPosts } from "./trending-posts";
 import { HomeSideContent } from "./home-side-content";
+import { Icon } from "../icon";
 
 export async function HomePosts() {
 
@@ -30,7 +31,8 @@ export async function HomePosts() {
                 <section className="mb-8">
                     <div className="mb-3 flex items-center justify-between">
                         <h2 className="flex items-center gap-2 text-xl font-bold text-[var(--text-primary)]">
-                            ⭐ Featured Articles
+                              <Icon name="star" />
+                              Featured Articles
                         </h2>
                         <Link
                             href="/blog"
@@ -57,7 +59,8 @@ export async function HomePosts() {
                 <section className="mt-8">
                     <div className="mb-3 flex items-center justify-between">
                         <h2 className="flex items-center gap-2 text-xl font-bold text-[var(--text-primary)]">
-                            🔥 Trending Articles
+                            <Icon name="fire" />
+                            Trending Articles
                         </h2>
                         <Link
                             href="/blog"
@@ -81,7 +84,8 @@ export async function HomePosts() {
                 <section className="mt-8">
                     <div className="mb-3 flex items-center justify-between">
                         <h2 className="flex items-center gap-2 text-xl font-bold text-[var(--text-primary)]">
-                            🕒 Recent Articles
+                            <Icon name="clock" />
+                            Recent Articles
                         </h2>
                         <Link
                             href="/blog"

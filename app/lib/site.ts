@@ -53,7 +53,7 @@ export function navLinkActiveClass(isActive: boolean) {
 }
 
 export const iconBtn =
-  "flex size-9 cursor-pointer items-center justify-center rounded-full border border-[var(--border)] bg-[var(--bg-secondary)] transition-all duration-300 hover:bg-[var(--border)]";
+  "flex size-9 cursor-pointer items-center justify-center rounded-full border border-transparent bg-transparent text-[var(--text-secondary)] transition-all duration-300 hover:border-[var(--border)] hover:bg-[var(--bg-secondary)] hover:text-[var(--text-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-purple)]";
 
 export const card =
   "rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)] p-[21px]";
