@@ -4,17 +4,14 @@ import { footerHref } from "../lib/site";
 
 const footerSections = [
   {
-    title: "Explore",
-    links: ["AI Tools", "Web Development", "App Development", "Tech Guides"],
+    title: "Company",
+    links: ["About Us", "Contact", "Careers", "Write for Us"],
   },
   {
     title: "Resources",
     links: ["Roadmaps", "Tutorials", "Cheat Sheets", "Newsletter"],
   },
-  {
-    title: "Company",
-    links: ["About Us", "Contact", "Careers", "Write for Us"],
-  },
+
   {
     title: "Legal",
     links: ["Privacy Policy", "Terms of Service", "Cookie Policy"],

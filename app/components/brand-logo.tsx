@@ -26,7 +26,7 @@ export function BrandLogo({ className = "", href, size = "md" }: BrandLogoProps)
         </span>
       </div>
       <span className={`${s.name} font-bold tracking-[-0.5px] text-[var(--text-primary)]`}>
-        DTS TECH <span className="text-[var(--accent-purple)]">AI</span>
+        DTS TECH <span className="text-[var(--accent-purple)]">INSIGHTS</span>
       </span>
     </div>
   );
