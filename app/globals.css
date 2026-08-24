@@ -4,6 +4,7 @@
 [data-theme="dark"] {
   --bg-primary: #0a0b1a;    
   --bg-secondary: #13152b;
+  --bg-img:url("/herobg-b.png");
   --border: #1e293b;
   --text-primary: #e2e8f0;
   --text-secondary: #94a3b8;
@@ -27,6 +28,7 @@
 [data-theme="light"] {
   --bg-primary: #ffffff;
   --bg-secondary: #f8fafc;
+  --bg-img:url("/herobg-w.png");
   --border: #e2e8f0;
   --text-primary: #0f172a;
   --text-secondary: #64748b;

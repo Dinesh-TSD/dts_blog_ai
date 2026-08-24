@@ -4,11 +4,6 @@ import { BlogListing } from "../components/blog-listing";
 import { Footer } from "../components/footer";
 import { Navbar } from "../components/navbar";
 
-export const metadata: Metadata = {
-  title: "Blog | DTS TECH AI",
-  description:
-    "Browse practical tech articles on AI, web development, developer tools, and the latest trends.",
-};
 
 export default async function BlogPage() {
  
