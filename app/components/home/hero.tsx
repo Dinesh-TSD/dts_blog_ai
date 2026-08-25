@@ -8,7 +8,7 @@ export default function Hero() {
     <>
       <section className="relative w-full min-h-[500px] overflow-hidden pb-8">
         {/* Background Image */}
-        <div className="absolute inset-0 h-full w-full min-w-full bg-[var(--bg-img)] bg-cover bg-right" />          
+        <div className="absolute inset-0 h-full w-full min-w-full bg-[image:var(--bg-img)] bg-cover bg-right" />
         
         <div className="hero-overlay absolute inset-0" />
         <div className="relative z-10 mx-auto grid max-w-7xl grid-cols-2 gap-12 px-6 py-[49px] max-lg:grid-cols-1 max-lg:gap-6">
