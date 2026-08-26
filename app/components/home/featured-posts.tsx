@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Article } from "../../components/article-detail";
 import { formatArticleDate } from "../../lib/site";
-import { Icon } from "../icon";
+import { Icon } from "../ui-icon";
 
 export function FeaturedPosts({ featuredPost }: { featuredPost: Article }) {
     const imageUrl = featuredPost.featuredImage?.url ?? featuredPost.image ?? "";

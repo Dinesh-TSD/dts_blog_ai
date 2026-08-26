@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BrandLogo } from "./brand-logo";
-import { Icon } from "./icon";
+import { Icon } from "./ui-icon";
 import { ThemeToggle } from "./theme-toggle";
 import { iconBtn, navLinkActiveClass } from "../lib/site";
 

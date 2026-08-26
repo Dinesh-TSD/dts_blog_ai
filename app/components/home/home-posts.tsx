@@ -5,7 +5,7 @@ import { FeaturedPosts } from "./featured-posts";
 import { RecentPosts } from "./recent-posts";
 import { TrendingPosts } from "./trending-posts";
 import { HomeSideContent } from "./home-side-content";
-import { Icon } from "../icon";
+import { Icon } from "../ui-icon";
 
 export async function HomePosts() {
 
