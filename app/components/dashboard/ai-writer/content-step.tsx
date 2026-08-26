@@ -2,21 +2,32 @@
 
 import { useState } from "react";
 import { btnPrimary, btnSecondary, panel } from "../../../lib/dashboard";
+import type { WriterGenerate } from "../ai-writer-page";
 
 type ArticleContent = { title: string; excerpt: string; content: string };
-type ContentStepProps = ArticleContent & { keyword: string; outline: string[]; onComplete: (article: ArticleContent) => void };
+type ContentStepProps = ArticleContent & { keyword: string; outline: string[]; onGenerate: WriterGenerate; onComplete: (article: ArticleContent) => void };
 
-export function ContentStep({ keyword, outline, title, excerpt, content, onComplete }: ContentStepProps) {
+export function ContentStep({ keyword, outline, title, excerpt, content, onGenerate, onComplete }: ContentStepProps) {
   const [article, setArticle] = useState({ title, excerpt, content });
   const [generated, setGenerated] = useState(Boolean(content));
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const generate = () => {
-    setArticle({
-      title: `The Practical Guide to ${keyword}`,
-      excerpt: `A clear, practical look at ${keyword} and the tools that make modern work easier.`,
-      content: `Introduction\n\n${keyword} is changing how teams research, build, and publish. This guide breaks down the essential ideas and practical choices.\n\n${outline.slice(1, -1).join("\n\n")}\n\nConclusion\n\nStart with one focused use case, measure the result, and expand your workflow from there.`,
-    });
-    setGenerated(true);
+  const generate = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const result = await onGenerate("content", { keyword, outline });
+      if (typeof result.title !== "string" || typeof result.excerpt !== "string" || typeof result.content !== "string") {
+        throw new Error("Gemini returned an invalid article");
+      }
+      setArticle({ title: result.title, excerpt: result.excerpt, content: result.content });
+      setGenerated(true);
+    } catch (generationError) {
+      setError(generationError instanceof Error ? generationError.message : "Could not generate article");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -26,8 +37,9 @@ export function ContentStep({ keyword, outline, title, excerpt, content, onCompl
           <p className="text-xs font-semibold uppercase tracking-wide text-[var(--accent-purple)]">Selected outline</p>
           <p className="mt-1 text-sm text-[var(--text-secondary)]">{outline.length} sections for {keyword}</p>
         </div>
-        <button type="button" className={btnPrimary} onClick={generate}>Generate full article</button>
+        <button type="button" className={btnPrimary} onClick={() => void generate()} disabled={loading}>{loading ? "Generating..." : "Generate full article"}</button>
       </div>
+      {error && <p className="mb-4 text-sm text-red-400" role="alert">{error}</p>}
       {generated && (
         <div className="grid gap-4 lg:grid-cols-[1.4fr_0.6fr]">
           <article className={panel}>
@@ -36,7 +48,7 @@ export function ContentStep({ keyword, outline, title, excerpt, content, onCompl
             <textarea className="mt-4 min-h-28 w-full resize-y border-0 bg-transparent text-sm leading-7 text-[var(--text-secondary)] focus:outline-none" value={article.excerpt} onChange={(event) => setArticle({ ...article, excerpt: event.target.value })} aria-label="Article excerpt" />
             <textarea className="mt-3 min-h-80 w-full resize-y rounded-lg border border-[var(--border)] bg-[var(--bg-primary)] p-4 text-sm leading-7 text-[var(--text-primary)] focus:border-[var(--accent-purple)] focus:outline-none" value={article.content} onChange={(event) => setArticle({ ...article, content: event.target.value })} aria-label="Article content" />
             <div className="mt-4 flex flex-wrap gap-3">
-              <button type="button" className={btnSecondary} onClick={generate}>Regenerate</button>
+              <button type="button" className={btnSecondary} onClick={() => void generate()} disabled={loading}>{loading ? "Generating..." : "Regenerate"}</button>
               <button type="button" className={btnPrimary} onClick={() => onComplete(article)}>Continue to images</button>
             </div>
           </article>

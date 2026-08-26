@@ -2,24 +2,49 @@
 
 import { useState } from "react";
 import { btnPrimary, panel, inputClass } from "../../../lib/dashboard";
+import type { WriterGenerate } from "../ai-writer-page";
 
 type ResearchStepProps = {
   keyword: string;
+  onGenerate: WriterGenerate;
   onChange: (value: string) => void;
   onComplete: (value: string) => void;
 };
 
 export function ResearchStep({
   keyword,
+  onGenerate,
   onChange,
   onComplete,
 }: ResearchStepProps) {
   const [searched, setSearched] = useState(Boolean(keyword));
   const [value, setValue] = useState(keyword);
-  const search = () => {
+  const [research, setResearch] = useState<{ intent: string; relatedKeywords: string[]; longTailKeywords: string[] } | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const search = async () => {
     if (value.trim()) {
-      onChange(value.trim());
-      setSearched(true);
+      const cleanValue = value.trim();
+      setLoading(true);
+      setError("");
+      try {
+        const result = await onGenerate("research", { keyword: cleanValue });
+        if (typeof result.intent !== "string" || !Array.isArray(result.relatedKeywords) || !Array.isArray(result.longTailKeywords)) {
+          throw new Error("Gemini returned invalid research");
+        }
+        onChange(cleanValue);
+        setResearch({
+          intent: result.intent,
+          relatedKeywords: result.relatedKeywords.filter((item): item is string => typeof item === "string"),
+          longTailKeywords: result.longTailKeywords.filter((item): item is string => typeof item === "string"),
+        });
+        setSearched(true);
+      } catch (researchError) {
+        setError(researchError instanceof Error ? researchError.message : "Could not research keyword");
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -42,10 +67,11 @@ export function ResearchStep({
           placeholder="e.g. AI development tools"
           aria-label="Keyword"
         />
-        <button type="button" className={btnPrimary} onClick={search}>
-          Search keyword
+        <button type="button" className={btnPrimary} onClick={() => void search()} disabled={loading}>
+          {loading ? "Researching..." : "Research keyword"}
         </button>
       </div>
+      {error && <p className="mt-3 text-sm text-red-400" role="alert">{error}</p>}
 
       {searched && (
         <div className="mt-6 overflow-x-auto">
@@ -64,11 +90,8 @@ export function ResearchStep({
             <tbody>
               <tr className="border-b border-[var(--border)] text-[var(--text-primary)]">
                 <td className="px-3 py-3 font-medium">{value}</td>
-                <td className="px-3 py-3">Informational</td>
-                <td className="px-3 py-3">12,400</td>
-                <td className="px-3 py-3">38</td>
-                <td className="px-3 py-3">$1.20</td>
-                <td className="px-3 py-3">$3.80</td>
+                <td className="px-3 py-3 capitalize">{research?.intent ?? "Informational"}</td>
+                <td className="px-3 py-3 text-[var(--text-secondary)]" colSpan={4}>Search metrics require a keyword data provider</td>
               </tr>
             </tbody>
           </table>
@@ -79,7 +102,7 @@ export function ResearchStep({
                 Related keywords
               </h3>
               <p className="mt-2 text-sm text-[var(--text-secondary)]">
-                AI tools, machine learning, AI software, generative AI
+                {research?.relatedKeywords.join(", ") || "No related keywords returned"}
               </p>
             </div>
             <div>
@@ -87,7 +110,7 @@ export function ResearchStep({
                 Long-tail keywords
               </h3>
               <p className="mt-2 text-sm text-[var(--text-secondary)]">
-                best AI development tools for beginners, AI development workflow
+                {research?.longTailKeywords.join(", ") || "No long-tail keywords returned"}
               </p>
             </div>
           </div>

@@ -17,6 +17,12 @@ export type WriterData = {
   imageUrls: string[];
 };
 
+export type WriterAction = "research" | "outline" | "content";
+export type WriterGenerate = (
+  action: WriterAction,
+  payload: Record<string, unknown>,
+) => Promise<Record<string, unknown>>;
+
 const steps = ["Research", "Outline", "Content", "Images", "Preview & Publish"];
 
 export function AiWriterPage() {
@@ -48,6 +54,19 @@ export function AiWriterPage() {
 
   const updateData = (updates: Partial<WriterData>) => {
     setData((current) => ({ ...current, ...updates }));
+  };
+
+  const generateWriter: WriterGenerate = async (action, payload) => {
+    const response = await fetch("/api/ai-writer", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action, ...payload }),
+    });
+    const body = (await response.json()) as { result?: Record<string, unknown>; message?: string };
+    if (!response.ok || !body.result) {
+      throw new Error(body.message ?? "Generation failed");
+    }
+    return body.result;
   };
 
   return (
@@ -113,6 +132,7 @@ export function AiWriterPage() {
       {activeStep === 0 && (
         <ResearchStep
           keyword={data.keyword}
+          onGenerate={generateWriter}
           onChange={(keyword) => updateData({ keyword })}
           onComplete={(keyword) => {
             updateData({ keyword });
@@ -124,6 +144,7 @@ export function AiWriterPage() {
         <OutlineStep
           keyword={data.keyword}
           outline={data.outline}
+          onGenerate={generateWriter}
           onComplete={(outline) => {
             updateData({ outline });
             completeStep(1);
@@ -137,6 +158,7 @@ export function AiWriterPage() {
           title={data.title}
           excerpt={data.excerpt}
           content={data.content}
+          onGenerate={generateWriter}
           onComplete={(article) => {
             updateData(article);
             completeStep(2);
@@ -170,7 +192,7 @@ export function AiWriterPage() {
           Back
         </button>
       )}
-      <p className="mt-6 text-xs text-[var(--text-secondary)]">Temporary workflow mode: generated results are local to this session.</p>
+      <p className="mt-6 text-xs text-[var(--text-secondary)]">AI generation uses your configured Gemini API key. Draft saving and publishing remain part of the next workflow phase.</p>
     </div>
   );
 }
