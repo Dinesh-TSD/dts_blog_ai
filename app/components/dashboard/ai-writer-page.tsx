@@ -6,6 +6,7 @@ import { ContentStep } from "./ai-writer/content-step";
 import { ImagesStep } from "./ai-writer/images-step";
 import { OutlineStep } from "./ai-writer/outline-step";
 import { PreviewStep } from "./ai-writer/preview-step";
+import { PublishStep } from "./ai-writer/publish-step";
 import { ResearchStep } from "./ai-writer/research-step";
 
 export type GeneratedWriterPost = {
@@ -100,6 +101,11 @@ export function AiWriterPage() {
     }
     console.log("AI Writer result:", body.result);
     return body.result;
+  };
+
+  const handlePublishSuccess = (postId: string, postSlug: string) => {
+    console.log("Article published successfully:", postId, postSlug);
+    completeStep(4);
   };
 
   return (
@@ -208,11 +214,9 @@ export function AiWriterPage() {
         />
       )}
       {activeStep === 4 && (
-        <PreviewStep
+        <PublishStep
           data={data}
-          onSave={() =>
-            window.alert("Draft saved locally for this temporary workflow.")
-          }
+          onPublishSuccess={handlePublishSuccess}
         />
       )}
 
@@ -225,7 +229,7 @@ export function AiWriterPage() {
           Back
         </button>
       )}
-      <p className="mt-6 text-xs text-[var(--text-secondary)]">AI generation uses your configured Gemini API key. Draft saving and publishing remain part of the next workflow phase.</p>
+      <p className="mt-6 text-xs text-[var(--text-secondary)]">Step 5: Publish & Save your article directly to the database. Articles can be saved as drafts or published immediately.</p>
     </div>
   );
 }
