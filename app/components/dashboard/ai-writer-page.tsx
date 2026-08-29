@@ -8,6 +8,36 @@ import { OutlineStep } from "./ai-writer/outline-step";
 import { PreviewStep } from "./ai-writer/preview-step";
 import { ResearchStep } from "./ai-writer/research-step";
 
+export type GeneratedWriterPost = {
+  title: string;
+  slug: string;
+  excerpt: string;
+  featuredImage: { url: string; alt: string };
+  author: { name: string; avatar?: string; role?: string };
+  category: string;
+  categorySlug: string;
+  categoryColor: string;
+  tags: string[];
+  published: boolean;
+  featured: boolean;
+  readingTime: number;
+  views: number;
+  publishedAt: string;
+  tableOfContents: Array<{ id: string; title: string }>;
+  sections: Array<{ id: string; heading: string; image?: string; imageAlt?: string; paragraph: string; points: string[] }>;
+  faq: Array<{ question: string; answer: string }>;
+  conclusion: { heading: string; paragraphs: string[] };
+  relatedPosts: string[];
+  seo: {
+    metaTitle?: string;
+    metaDescription?: string;
+    keywords?: string[];
+    canonicalUrl?: string;
+    openGraph?: { title?: string; description?: string; image?: string };
+    twitter?: { title?: string; description?: string; image?: string };
+  };
+};
+
 export type WriterData = {
   keyword: string;
   outline: string[];
@@ -15,6 +45,7 @@ export type WriterData = {
   excerpt: string;
   content: string;
   imageUrls: string[];
+  post: GeneratedWriterPost | null;
 };
 
 export type WriterAction = "research" | "outline" | "content";
@@ -41,6 +72,7 @@ export function AiWriterPage() {
     excerpt: "",
     content: "",
     imageUrls: [],
+    post: null,
   });
 
   const completeStep = (step: number) => {
@@ -66,6 +98,7 @@ export function AiWriterPage() {
     if (!response.ok || !body.result) {
       throw new Error(body.message ?? "Generation failed");
     }
+    console.log("AI Writer result:", body.result);
     return body.result;
   };
 
@@ -160,7 +193,7 @@ export function AiWriterPage() {
           content={data.content}
           onGenerate={generateWriter}
           onComplete={(article) => {
-            updateData(article);
+                   updateData({ ...article, post: { ...article.post } });
             completeStep(2);
           }}
         />
