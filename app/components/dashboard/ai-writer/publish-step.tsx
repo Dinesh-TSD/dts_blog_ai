@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { btnPrimary, btnSecondary, panel } from "../../../lib/dashboard";
 import type { WriterData } from "../ai-writer-page";
@@ -189,6 +190,14 @@ export function PublishStep({ data, onPublishSuccess }: PublishStepProps) {
               >
                 View published article →
               </a>
+            )}
+            {saveDraftStatus === "saved" && (
+              <Link
+                href="/dashboard/drafts"
+                className="mt-3 inline-block text-emerald-400 underline hover:text-emerald-300"
+              >
+                View your drafts →
+              </Link>
             )}
           </div>
         ) : null}
