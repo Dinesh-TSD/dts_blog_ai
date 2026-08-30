@@ -1,7 +1,7 @@
 "use client";
 
 import { useTheme } from "./theme-provider";
-import { Icon } from "./icon";
+import { Icon } from "./ui-icon";
 
 export function ThemeToggle() {
   const { theme, toggleTheme } = useTheme();

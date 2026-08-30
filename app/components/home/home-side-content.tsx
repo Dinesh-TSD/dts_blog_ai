@@ -1,6 +1,6 @@
 import { card } from "@/app/lib/site";
 import Link from "next/link";
-import { Icon } from "../icon";
+import { Icon } from "../ui-icon";
 
 export function HomeSideContent() {
     return(

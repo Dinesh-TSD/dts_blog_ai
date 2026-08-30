@@ -84,3 +84,86 @@ export async function GET(request: NextRequest) {
     );
   }
 }
+
+// ─── POST /api/posts ──────────────────────────────────────────────────────────
+// Create a new post from AI writer output
+// Body:
+//   title, slug, excerpt, category, categorySlug, categoryColor, tags
+//   featuredImage { url, alt }, author { name, avatar, role }
+//   content (string - will be parsed into sections)
+//   sections, faq, conclusion, seo, toc, published (default: true)
+export async function POST(request: NextRequest) {
+  try {
+    await connectDB();
+
+    const body = await request.json();
+
+    // Validate required fields
+    const required = ["title", "slug", "excerpt", "category", "categorySlug"];
+    for (const field of required) {
+      if (!body[field]) {
+        return NextResponse.json(
+          { success: false, message: `Missing required field: ${field}` },
+          { status: 400 },
+        );
+      }
+    }
+
+    // Check if slug already exists
+    const existingPost = await Post.findOne({ slug: body.slug });
+    if (existingPost) {
+      return NextResponse.json(
+        { success: false, message: "Post with this slug already exists" },
+        { status: 409 },
+      );
+    }
+
+    // Create post document
+    const postData = {
+      title: body.title,
+      slug: body.slug,
+      excerpt: body.excerpt,
+      category: body.category,
+      categorySlug: body.categorySlug,
+      categoryColor: body.categoryColor || "#8b5cf6",
+      tags: Array.isArray(body.tags) ? body.tags : [],
+      featuredImage: body.featuredImage || { url: "", alt: "" },
+      author: body.author || { name: "DTS Tech AI", role: "AI Writer" },
+      sections: Array.isArray(body.sections) ? body.sections : [],
+      faq: Array.isArray(body.faq) ? body.faq : [],
+      conclusion: body.conclusion || { heading: "Conclusion", paragraphs: [] },
+      seo: body.seo || {
+        metaTitle: body.title,
+        metaDescription: body.excerpt,
+        keywords: body.tags || [],
+      },
+      toc: Array.isArray(body.toc) ? body.toc : [],
+      relatedPosts: Array.isArray(body.relatedPosts) ? body.relatedPosts : [],
+      readingTime: body.readingTime || 5,
+      views: body.views || 0,
+      published: typeof body.published === "boolean" ? body.published : true,
+      featured: typeof body.featured === "boolean" ? body.featured : false,
+      publishedAt: body.publishedAt ? new Date(body.publishedAt) : new Date(),
+    };
+
+    const post = await Post.create(postData);
+
+    return NextResponse.json(
+      {
+        success: true,
+        message: "Post created successfully",
+        data: post,
+      },
+      { status: 201 },
+    );
+  } catch (error) {
+    console.error("POST /api/posts error:", error);
+    return NextResponse.json(
+      {
+        success: false,
+        message: error instanceof Error ? error.message : "Failed to create post",
+      },
+      { status: 500 },
+    );
+  }
+}

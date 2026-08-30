@@ -51,3 +51,5 @@ export function Icon({ name, size = 16 }: { name: IconName; size?: number }) {
     </svg>
   );
 }
+
+export default Icon;

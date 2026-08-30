@@ -1,6 +1,6 @@
 import { btnPrimary, btnSecondary } from "@/app/lib/dashboard";
 import Link from "next/link";
-import { Icon } from "../icon";
+import { Icon } from "../ui-icon";
 
 
 export default function Hero() {

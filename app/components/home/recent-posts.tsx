@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Article } from "../../components/article-detail";
 import { formatArticleDate } from "../../lib/site";
-import { Icon } from "../icon";
+import { Icon } from "../ui-icon";
 
 
 export function RecentPosts({ recentPost }: { recentPost: Article }) {
