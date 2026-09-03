@@ -45,10 +45,16 @@ const SectionSchema = new Schema(
       required: true,
     },
 
+    paragraph: {
+      type: String,
+      default: "",
+    },
+
+    points: [String],
+
     paragraphs: [
       {
         type: String,
-        required: true,
       },
     ],
   },

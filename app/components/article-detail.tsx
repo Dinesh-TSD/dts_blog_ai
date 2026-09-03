@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { NewsletterForm } from "./home/newsletter-form";
-import { btnPrimary, card } from "../lib/site";
+import { btnPrimary, card, formatArticleDate } from "../lib/site";
 import { Inter } from "next/font/google";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -37,11 +37,15 @@ export type Article = {
   readingTime: number;
   views: number;
 
-  publishedAt: string;
+  publishedAt: string; 
   createdAt?: string;
   updatedAt?: string;
 
   tableOfContents: {
+    id: string;
+    title: string;
+  }[];
+  toc?: {
     id: string;
     title: string;
   }[];
@@ -123,7 +127,7 @@ export function ArticleDetailContent({
             {article.title}
           </h1>
           <div className="flex flex-wrap items-center gap-4 text-sm text-[var(--text-secondary)]">
-            <span>📅 {article.createdAt}</span>
+            <span>📅 {formatArticleDate(article.createdAt ?? article.publishedAt)}</span>
             <span>⏱️ {article.readingTime}</span>
             <div className="flex items-center gap-2">
               <span>Share:</span>
@@ -268,6 +272,9 @@ export function ArticleDetailContent({
 }
 
 export function ArticleSidebar({ article }: { article: Article }) {
+  const tableOfContents = article.tableOfContents?.length
+    ? article.tableOfContents
+    : article.toc ?? [];
 
   return (
     <aside className="flex flex-col gap-6">
@@ -277,7 +284,7 @@ export function ArticleSidebar({ article }: { article: Article }) {
           Table of Contents
         </h3>
         <nav className="flex flex-col gap-2">
-          {article.tableOfContents?.map((item) => (
+          {tableOfContents.map((item) => (
             <a
               key={item.id}
               href={`#${item.id}`}
@@ -295,7 +302,7 @@ export function ArticleSidebar({ article }: { article: Article }) {
           Get new articles delivered to your inbox.
         </p>
         <div className="mt-4">
-          <NewsletterForm />
+          <NewsletterForm compact />
         </div>
       </div>
 

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Article } from "./article-detail";
+import { formatArticleDate } from "../lib/site";
 
 
 export function BlogArticleCard({
@@ -36,7 +37,9 @@ export function BlogArticleCard({
           </div>
           <div className="mt-5">
             <div className="mb-3 flex flex-wrap items-center gap-4 text-[11px] text-[var(--text-secondary)]">
-              <span className="flex items-center gap-1">📅 {article.createdAt}</span>
+              <span className="flex items-center gap-1">
+                📅 {formatArticleDate(article.createdAt ?? article.publishedAt)}
+              </span>
               <span className="flex items-center gap-1">
                 ⏱️ {article.readingTime}
               </span>

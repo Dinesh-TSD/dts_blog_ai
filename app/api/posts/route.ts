@@ -118,6 +118,27 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const sections = Array.isArray(body.sections)
+      ? body.sections
+          .filter((section: unknown): section is Record<string, unknown> => (
+            typeof section === "object" && section !== null
+          ))
+          .map((section: Record<string, unknown>, index: number) => ({
+            id: typeof section.id === "string" ? section.id : `section-${index + 1}`,
+            heading: typeof section.heading === "string" ? section.heading : `Section ${index + 1}`,
+            image: typeof section.image === "string" ? section.image : "",
+            imageAlt: typeof section.imageAlt === "string" ? section.imageAlt : "",
+            paragraph: typeof section.paragraph === "string"
+              ? section.paragraph
+              : Array.isArray(section.paragraphs)
+                ? (section.paragraphs as unknown[]).filter((paragraph): paragraph is string => typeof paragraph === "string").join("\n\n")
+                : "",
+            points: Array.isArray(section.points)
+              ? (section.points as unknown[]).filter((point): point is string => typeof point === "string")
+              : [],
+          }))
+      : [];
+
     // Create post document
     const postData = {
       title: body.title,
@@ -129,7 +150,7 @@ export async function POST(request: NextRequest) {
       tags: Array.isArray(body.tags) ? body.tags : [],
       featuredImage: body.featuredImage || { url: "", alt: "" },
       author: body.author || { name: "DTS Tech AI", role: "AI Writer" },
-      sections: Array.isArray(body.sections) ? body.sections : [],
+      sections,
       faq: Array.isArray(body.faq) ? body.faq : [],
       conclusion: body.conclusion || { heading: "Conclusion", paragraphs: [] },
       seo: body.seo || {
